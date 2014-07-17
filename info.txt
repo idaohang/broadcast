@@ -1,0 +1,7 @@
+pi: 192.168.43.250 
+port 
+to: 192.168.43.255:4551
+$GPGGA
+lat, long, quality,# of sat
+if W then negative
+if S then negative
