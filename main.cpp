@@ -24,32 +24,36 @@ string ident () {
 		cerr << "Error opening modem\n";
 		return ERRORSTRING;
 	}
-	char inf [ ] = "ati1";
-	int wb = write(modem,inf,4);
+	else {
+		fcntl(modem, F_SETFL, 0);
+	}
+	char inf [ ] = "ATI1/r/n";
+	ssize_t wb = write(modem,inf,6);
 	cout << "wb: " << wb << endl;
 	if (wb < 4) {
 		cerr << "Error writing modem\n";
 	}
 	char buf[BUFSIZE];
-	int rb = read(modem, buf, BUFSIZE);
-	close(modem);
-	cout << "rb: " << rb << endl;
-	string data(buf);
-	cout << "ID: " << data << "\n";
-	if (rb < 0) {
-		cerr << "error reading modem\n";
+	string ar[BUFSIZE];
+	sleep(1);
+	cout << "done sleeping\n";
+	int i;
+	for (i = 0; read(modem, buf, BUFSIZE) > 0; i++) {
+		string raw(buf, BUFSIZE);
+		ar[i] = raw;
+		cout << "buf:" << buf << endl;
 	}
-	else {
-		/*
-		unsigned int found = data.find("MEID:");
-		if (found > 0) {
-			//MEID: 
-			// 12345
-			data.substr(found+5,string::npos);
+	for (i = 0; i < BUFSIZE; i++) {
+		cout << i << " " << ar[i];
+		unsigned int found = ar[i].find("MEID:");
+		if (found != string::npos) {
+			string data = ar[i].substr(found+5, string::npos);
+			cout << "ID: " << data;
+			close(modem);
+			return data;
 		}
-		*/
 	}
-	return data;
+	return ERRORSTRING;
 }
 //send data plus identifying info to host at host port
 bool bcast (string line,string id) {
@@ -80,7 +84,8 @@ int main () {
 	if (id == ERRORSTRING) {
 		cerr << "error obtaining id\n";
 	}
-	char buf[BUFSIZE];
+	/*
+	char buf[BUFSIZE]
 	cout << "ready\n";
 	while(read(gpsdata,buf,BUFSIZE)) {
 		cout << "finding data\n";
@@ -96,6 +101,7 @@ int main () {
 		}
 		sleep(1);
 	}
+	*/
 	cerr << "End of file?\n";
 	close(gpsdata);
 	return 0;
