@@ -18,8 +18,21 @@ using namespace std;
 const string host = "192.168.96.204";
 unsigned short host_port = 4551;
 
+int modem = open(MODEMFILE, O_RDONLY | O_NOCTTY | O_NODELAY);
 string ident () {
-return "   ";
+	if (modem == -1) {
+		cerr << "Error opening modem\n";
+		return ERRORSTRING;
+	}
+	int wb = write(modem,"ati1",4);
+	if (wb < 4) {
+		cerr << "error writing modem\n";
+		return ERRORSTRING;
+	}
+	char buf[BUFSIZE];
+	int rb = read(modem, buf, BUFSIZE);
+	string data(buf);
+	return data;
 }
 //send data plus identifying info to host at host port
 bool bcast (string line) {
@@ -64,5 +77,6 @@ int main () {
 	}
 	cerr << "End of file?\n";
 	close(gpsdata);
+	close(modem);
 	return 0;
 }
