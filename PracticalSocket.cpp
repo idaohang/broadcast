@@ -1,6 +1,8 @@
 /*
  *   C++ sockets on Unix and Windows
- *   Copyright (C) 2002
+ *   Copyright (C) 2002 Jeff Donahoo
+ *   http://cs.ecs.baylor.edu/~donahoo/practical/CSockets/practical/
+ *
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
