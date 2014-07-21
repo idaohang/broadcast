@@ -28,16 +28,18 @@ string ident () {
 	int wb = write(modem,inf,4);
 	if (wb < 4) {
 		cerr << "Error writing modem\n";
+		cerr << "wb: " << wb << endl;;
 	}
 	char buf[BUFSIZE];
 	int rb = read(modem, buf, BUFSIZE);
 	close(modem);
+	string data(buf);
+	cout << "ID: " << data << "\n";
 	if (rb < 0) {
 		cerr << "error reading modem\n";
-		return ERRORSTRING;
+		cerr << "rb: " << rb << endl;
 	}
 	else {
-		string data(buf);
 		/*
 		unsigned int found = data.find("MEID:");
 		if (found > 0) {
@@ -46,8 +48,8 @@ string ident () {
 			data.substr(found+5,string::npos);
 		}
 		*/
-		return data;
 	}
+	return data;
 }
 //send data plus identifying info to host at host port
 bool bcast (string line,string id) {
