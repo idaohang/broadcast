@@ -24,7 +24,11 @@ string ident () {
 		cerr << "Error opening modem\n";
 		return ERRORSTRING;
 	}
-	write(modem,"ati1",5);
+	char inf [ ] = "ati1";
+	int wb = write(modem,inf,4);
+	if (wb < 4) {
+		cerr << "Error writing modem\n";
+	}
 	char buf[BUFSIZE];
 	int rb = read(modem, buf, BUFSIZE);
 	close(modem);
