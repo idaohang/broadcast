@@ -39,9 +39,9 @@ string ident () {
 	cout << "done sleeping\n";
 	int i;
 	int ii = read(modem,buf,BUFSIZE);
-	cout << ii;
-	while(ii) { 
-		cout << "workingon stuff\n";
+	cout << ii << endl;
+	while(ii > 0) { 
+		cout << "working on stuff\n";
 		string raw(buf, BUFSIZE);
 		cout << "More stuff\n";
 		ar[i] = raw;
