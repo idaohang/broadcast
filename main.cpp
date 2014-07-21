@@ -18,30 +18,39 @@ using namespace std;
 const string host = "192.168.96.204";
 unsigned short host_port = 4551;
 
-int modem = open(MODEMFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
 string ident () {
+	int modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (modem == -1) {
 		cerr << "Error opening modem\n";
 		return ERRORSTRING;
 	}
-	write(modem,"ati1",4);
+	write(modem,"ati1",5);
 	char buf[BUFSIZE];
 	int rb = read(modem, buf, BUFSIZE);
+	close(modem);
 	if (rb < 0) {
 		cerr << "error reading modem\n";
 		return ERRORSTRING;
 	}
 	else {
 		string data(buf);
+		/*
+		unsigned int found = data.find("MEID:");
+		if (found > 0) {
+			//MEID: 
+			// 12345
+			data.substr(found+5,string::npos);
+		}
+		*/
 		return data;
 	}
 }
 //send data plus identifying info to host at host port
-bool bcast (string line) {
+bool bcast (string line,string id) {
 	try {
 		UDPSocket sock;
 		cout << "trying udp\n";
-		string data = line + "::" + ident();
+		string data = line + "::" + id;
 		sock.sendTo(data.c_str(),data.size(), host, host_port);
 	}
 	catch (SocketException &e) {
@@ -59,7 +68,11 @@ int main () {
 	}
 	else {
 		fcntl(gpsdata,F_SETFL,0);
-		cout << "started\n";
+		cout << "opened gps\n";
+	}
+	string id = ident();
+	if (id == ERRORSTRING) {
+		cerr << "error obtaining id\n";
 	}
 	char buf[BUFSIZE];
 	cout << "ready\n";
@@ -70,7 +83,7 @@ int main () {
 		unsigned int found = data.find("GPRMC");
 		if (found == 1) {
 			cout << "found data at " << found << endl;;
-			bool test = bcast(data);
+			bool test = bcast(data,id);
 			if (!test) {
 				cerr << "FAIL: " << data << endl;
 			}
@@ -79,6 +92,5 @@ int main () {
 	}
 	cerr << "End of file?\n";
 	close(gpsdata);
-	close(modem);
 	return 0;
 }
