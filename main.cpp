@@ -48,7 +48,7 @@ string ident () {
 		cout << "buf:" << buf << endl;
 		i++;
 		ii = read(modem,buf,BUFSIZE);
-		cout << ii;
+		cout << ii << endl;;
 	}
 	for (i = 0; i < BUFSIZE; i++) {
 		cout << i << " " << ar[i];
