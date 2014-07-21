@@ -47,6 +47,7 @@ int main () {
 		cout << "started\n";
 	}
 	char buf[BUFSIZE];
+	cout << "ready\n";
 	while(read(gpsdata,buf,BUFSIZE)) {
 		cout << "finding data\n";
 		string data(buf);
