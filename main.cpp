@@ -1,7 +1,5 @@
 #include <iostream>
 #include <string>
-#include <fstream>
-#include <sstream>
 #include <unistd.h>
 #include <cstring>
 #include <cstdio>
@@ -34,31 +32,22 @@ string ident () {
 		cerr << "Error writing modem\n";
 	}
 	char buf[BUFSIZE];
-	string ar[BUFSIZE];
 	sleep(1);
 	cout << "done sleeping\n";
 	int i;
 	int ii = read(modem,buf,BUFSIZE);
 	cout << ii << endl;
 	while(ii > 0) { 
-		cout << "working on stuff\n";
-		string raw(buf, BUFSIZE);
-		cout << "More stuff\n";
-		//ar[i] = raw;
-		cout << "buf:" << buf << endl;
-		i++;
-		ii = read(modem,buf,BUFSIZE);
-		cout << ii << endl;;
-	}
-	for (i = 0; i < BUFSIZE; i++) {
-		cout << i << " " << ar[i];
-		unsigned int found = ar[i].find("MEID:");
+		string raw(buf, ii);
+		unsigned int found = raw.find("MEID:");
 		if (found != string::npos) {
-			string data = ar[i].substr(found+5, string::npos);
+			string data = raw.substr(found+5, string::npos);
 			cout << "ID: " << data;
 			close(modem);
 			return data;
 		}
+		i++;
+		ii = read(modem,buf,BUFSIZE);
 	}
 	return ERRORSTRING;
 }
@@ -67,7 +56,7 @@ bool bcast (string line,string id) {
 	try {
 		UDPSocket sock;
 		cout << "trying udp\n";
-		string data = line + "::" + id;
+		string data = line + id;
 		sock.sendTo(data.c_str(),data.size(), host, host_port);
 	}
 	catch (SocketException &e) {
@@ -91,8 +80,8 @@ int main () {
 	if (id == ERRORSTRING) {
 		cerr << "error obtaining id\n";
 	}
-	/*
-	char buf[BUFSIZE]
+	
+	char buf[BUFSIZE];
 	cout << "ready\n";
 	while(read(gpsdata,buf,BUFSIZE)) {
 		cout << "finding data\n";
@@ -106,9 +95,9 @@ int main () {
 				cerr << "FAIL: " << data << endl;
 			}
 		}
-		sleep(1);
+		sleep(0);
 	}
-	*/
+	
 	cerr << "End of file?\n";
 	close(gpsdata);
 	return 0;

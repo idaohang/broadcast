@@ -1,4 +1,4 @@
 all:
-	g++ -Wall main.cpp PracticalSocket.cpp -o bcast
+	g++ -O3 -Wall main.cpp PracticalSocket.cpp -o bcast
 clean:
 	rm -rf *.o *~ bcast 
