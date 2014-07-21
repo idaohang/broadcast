@@ -26,18 +26,18 @@ string ident () {
 	}
 	char inf [ ] = "ati1";
 	int wb = write(modem,inf,4);
+	cout << "wb: " << wb << endl;
 	if (wb < 4) {
 		cerr << "Error writing modem\n";
-		cerr << "wb: " << wb << endl;;
 	}
 	char buf[BUFSIZE];
 	int rb = read(modem, buf, BUFSIZE);
 	close(modem);
+	cout << "rb: " << rb << endl;
 	string data(buf);
 	cout << "ID: " << data << "\n";
 	if (rb < 0) {
 		cerr << "error reading modem\n";
-		cerr << "rb: " << rb << endl;
 	}
 	else {
 		/*
