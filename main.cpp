@@ -11,8 +11,8 @@
 #include "PracticalSocket.h"
 using namespace std;
 
-#define GPSFILE "/dev/ttyUSB0"
-#define MODEMFILE "/dev/ttyUSB1"
+#define GPSFILE "/dev/ttyUSB1"
+#define MODEMFILE "/dev/ttyUSB2"
 #define BUFSIZE 100
 #define ERRORSTRING "ERROR"
 const string host = "192.168.96.204";
