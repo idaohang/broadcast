@@ -19,9 +19,9 @@ const string host = "192.168.96.204";
 unsigned short host_port = 4551;
 
 string ident () {
-	//not sure how to get id
-	return ERRORSTRING;
+return "   ";
 }
+//send data plus identifying info to host at host port
 bool bcast (string line) {
 	try {
 		UDPSocket sock;
@@ -33,7 +33,7 @@ bool bcast (string line) {
 	cerr << e.what() << "\n";
 	return false;
 	}
-	cout << "success?\n";
+	cout << "DATA SENT\n\n";
 	return true;
 }
 int main () {
@@ -50,7 +50,7 @@ int main () {
 	while(read(gpsdata,buf,BUFSIZE)) {
 		cout << "finding data\n";
 		string data(buf);
-		cout << "Got " << data << endl;
+		cout << data << endl;
 		unsigned int found = data.find("GPRMC");
 		if (found == 1) {
 			cout << "found data at " << found << endl;;
