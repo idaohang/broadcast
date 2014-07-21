@@ -27,13 +27,11 @@ string ident () {
 	}
 	char inf [ ] = "ATI1\r\n";
 	ssize_t wb = write(modem,inf,6);
-	cout << "wb: " << wb << endl;
 	if (wb < 4) {
 		cerr << "Error writing modem\n";
 	}
 	char buf[BUFSIZE];
 	sleep(1);
-	cout << "done sleeping\n";
 	int i;
 	int ii = read(modem,buf,BUFSIZE);
 	cout << ii << endl;
@@ -41,8 +39,8 @@ string ident () {
 		string raw(buf, ii);
 		unsigned int found = raw.find("MEID:");
 		if (found != string::npos) {
-			string data = raw.substr(found+5, string::npos);
-			cout << "ID: " << data;
+			string data = raw.substr(found+6, string::npos);
+			cout << "ID:" << data;
 			close(modem);
 			return data;
 		}
@@ -55,7 +53,6 @@ string ident () {
 bool bcast (string line,string id) {
 	try {
 		UDPSocket sock;
-		cout << "trying udp\n";
 		string data = line + id;
 		sock.sendTo(data.c_str(),data.size(), host, host_port);
 	}
@@ -63,18 +60,16 @@ bool bcast (string line,string id) {
 	cerr << e.what() << "\n";
 	return false;
 	}
-	cout << "DATA SENT\n\n";
+	cout << "DATA SENT\n";
 	return true;
 }
 int main () {
-	cout << "running\n";
 	int gpsdata = open(GPSFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
 	if (gpsdata == -1) {
 		cerr << "error opening file\n";
 	}
 	else {
 		fcntl(gpsdata,F_SETFL,0);
-		cout << "opened gps\n";
 	}
 	string id = ident();
 	if (id == ERRORSTRING) {
@@ -82,14 +77,11 @@ int main () {
 	}
 	
 	char buf[BUFSIZE];
-	cout << "ready\n";
 	while(read(gpsdata,buf,BUFSIZE)) {
-		cout << "finding data\n";
 		string data(buf);
-		cout << data << endl;
 		unsigned int found = data.find("GPRMC");
 		if (found == 1) {
-			cout << "found data at " << found << endl;;
+			cout << data << endl;
 			bool test = bcast(data,id);
 			if (!test) {
 				cerr << "FAIL: " << data << endl;
@@ -100,5 +92,5 @@ int main () {
 	
 	cerr << "End of file?\n";
 	close(gpsdata);
-	return 0;
+	return 1;
 }
