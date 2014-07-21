@@ -13,7 +13,7 @@ using namespace std;
 
 #define GPSFILE "/dev/ttyUSB1"
 #define MODEMFILE "/dev/ttyUSB2"
-#define BUFSIZE 100
+#define BUFSIZE 10000
 #define ERRORSTRING "ERROR"
 const string host = "192.168.96.204";
 unsigned short host_port = 4551;
