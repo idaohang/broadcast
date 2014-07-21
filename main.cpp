@@ -27,7 +27,7 @@ string ident () {
 	else {
 		fcntl(modem, F_SETFL, 0);
 	}
-	char inf [ ] = "ATI1/r/n";
+	char inf [ ] = "ATI1\r\n";
 	ssize_t wb = write(modem,inf,6);
 	cout << "wb: " << wb << endl;
 	if (wb < 4) {
