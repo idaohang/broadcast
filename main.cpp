@@ -44,7 +44,7 @@ string ident () {
 		cout << "working on stuff\n";
 		string raw(buf, BUFSIZE);
 		cout << "More stuff\n";
-		ar[i] = raw;
+		//ar[i] = raw;
 		cout << "buf:" << buf << endl;
 		i++;
 		ii = read(modem,buf,BUFSIZE);
