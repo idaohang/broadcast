@@ -38,12 +38,13 @@ string ident () {
 	sleep(1);
 	cout << "done sleeping\n";
 	int i;
-	for (i = 0; read(modem, &buf, BUFSIZE) > 0; i++) {
+	while(read(modem, &buf, BUFSIZE) > 0) { 
 		cout << "workingon stuff\n";
 		string raw(buf, BUFSIZE);
 		cout << "More stuff\n";
 		ar[i] = raw;
 		cout << "buf:" << buf << endl;
+		i++;
 	}
 	for (i = 0; i < BUFSIZE; i++) {
 		cout << i << " " << ar[i];
