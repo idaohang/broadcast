@@ -13,7 +13,7 @@ using namespace std;
 #define MODEMFILE "/dev/ttyUSB2"
 #define BUFSIZE 10000
 #define ERRORSTRING "ERROR"
-const string host = "192.168.96.204";
+const string host = "192.168.43.255";
 unsigned short host_port = 4551;
 
 string ident () {
