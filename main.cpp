@@ -18,7 +18,7 @@ using namespace std;
 const string host = "192.168.96.204";
 unsigned short host_port = 4551;
 
-int modem = open(MODEMFILE, O_RDONLY | O_NOCTTY | O_NODELAY);
+int modem = open(MODEMFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
 string ident () {
 	if (modem == -1) {
 		cerr << "Error opening modem\n";
@@ -31,8 +31,14 @@ string ident () {
 	}
 	char buf[BUFSIZE];
 	int rb = read(modem, buf, BUFSIZE);
-	string data(buf);
-	return data;
+	if (rb < 0) {
+		cerr << "error reading modem\n";
+		return ERRORSTRING;
+	}
+	else {
+		string data(buf);
+		return data;
+	}
 }
 //send data plus identifying info to host at host port
 bool bcast (string line) {
