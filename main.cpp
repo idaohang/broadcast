@@ -5,13 +5,15 @@
 #include <unistd.h>
 #include <cstring>
 #include <cstdio>
+#include <cerrno>
+#include <fcntl.h>
+#include <termios.h>
 #include "PracticalSocket.h"
 using namespace std;
 
 #define GPSFILE "/dev/ttyUSB0"
 #define MODEMFILE "/dev/ttyUSB1"
-#define BUFSIZE 500
-#define TIMEOUT 5000
+#define BUFSIZE 100
 #define ERRORSTRING "ERROR"
 const string host = "192.168.96.204";
 unsigned short host_port = 4551;
@@ -36,19 +38,22 @@ bool bcast (string line) {
 }
 int main () {
 	cout << "running\n";
-	string line;
-	
-	cout << "started\n";
-	if (ret != 1) {
+	int gpsdata = open(GPSFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
+	if (gpsdata == -1) {
 		cerr << "error opening file\n";
 	}
-	cout << "Opened serial port\n";
-	while(gpsdata.ReadString(buf, '$', BUFSIZE, TIMEOUT) > 0) {
+	else {
+		fcntl(gpsdata,F_SETFL,0);
+		cout << "started\n";
+	}
+	char buf[BUFSIZE];
+	while(read(gpsdata,buf,BUFSIZE)) {
 		cout << "finding data\n";
 		string data(buf);
+		cout << "Got " << data << endl;
 		unsigned int found = data.find("GPRMC");
-		if (found != string::npos) {
-			cout << "found data: " << data << endl;
+		if (found == 1) {
+			cout << "found data at " << found << endl;;
 			bool test = bcast(data);
 			if (!test) {
 				cerr << "FAIL: " << data << endl;
@@ -57,6 +62,6 @@ int main () {
 		sleep(1);
 	}
 	cerr << "End of file?\n";
-	gpsdata.Close();
+	close(gpsdata);
 	return 0;
 }
