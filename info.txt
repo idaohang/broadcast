@@ -1,8 +1,4 @@
 pi: 192.168.43.250 
-port 
+port 4451 
 to: 192.168.43.255:4551
-$GPGGA
-$GPVTG
-lat, long, quality,# of sat
-if W then negative
-if S then negative
+$GPRMC
