@@ -13,6 +13,7 @@ using namespace std;
 #define MODEMFILE "/dev/ttyUSB2"
 #define BUFSIZE 10000
 #define ERRORSTRING "ERROR"
+#define SERV_TIME 45 //about 15 seconds
 const string host = "192.168.96.204";
 const unsigned short destport = 4451;
 const string server = "24.248.166.181";
@@ -62,7 +63,7 @@ bool bcast (string line,string id,int type) {
 			sock.sendTo(data.c_str(),data.size(), host, destport);
 		}
 		else if (type == 1) {
-			data += "A";
+			
 			socka.sendTo(data.c_str(),data.size(),server,destport);
 		}
 	}
@@ -70,7 +71,7 @@ bool bcast (string line,string id,int type) {
 	cerr << e.what() << "\n";
 	return false;
 	}
-	cout << "DATA SENT\n";
+	//cout << "DATA SENT\n";
 	return true;
 }
 int main () {
@@ -90,8 +91,8 @@ int main () {
 	int i = 0;
 	while(read(gpsdata,buf,BUFSIZE)) {
 		string data(buf);
-		unsigned int found = data.find("GPRMC");
-		if (found == 1) {
+		unsigned int found = data.find("$GPRMC");
+		if (found == 0) {
 			//cout << data << endl;
 			int type = 0;
 			bool test = bcast(data,id,type);
@@ -99,7 +100,7 @@ int main () {
 				cerr << "FAIL: " << data << endl;
 			}
 			++i;
-			if (i >= 20) {
+			if (i >= SERV_TIME) {
 				type = 1;
 				cout << "TO SERVER\n";
 				bool test = bcast(data,id,type);
