@@ -1,8 +1,10 @@
 FILES  = PracticalSocket.cpp ident.cpp
 CPP = g++
 FLAGS = -Wall
-all: clean
+all: clean bcast info
+bcast: main.cpp $(FILES)
 	$(CPP) $(FLAGS) main.cpp $(FILES) -o bcast
+info: info.cpp $(FILES)
 	$(CPP) $(FLAGS) info.cpp $(FILES) -o info 
 clean:
 	rm -rf *.o *~ bcast
