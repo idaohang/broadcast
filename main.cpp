@@ -13,10 +13,10 @@ using namespace std;
 #define MODEMFILE "/dev/ttyUSB2"
 #define BUFSIZE 10000
 #define ERRORSTRING "ERROR"
-#define SERV_TIME 45 //about 15 seconds
-const string host = "192.168.96.204";
-const unsigned short destport = 4451;
-const string server = "24.248.166.181";
+#define SERV_TIME 45 // about 15 seconds
+#define SUPDATE 15000 //about 80 minutes
+#define CONFLOC "/etc/bcast/"
+
 UDPSocket sock;
 UDPSocket socka;
 string ident () {
@@ -52,16 +52,12 @@ string ident () {
 	return ERRORSTRING;
 }
 //send data plus identifying info to host at host port
-bool bcast (string line,string id,int type) {
+bool bcast (string line,string id,string hostip,unsigned short destport) {
 	try {
+		UPDSocket sock;
 		string data = line + "," + id;
-		if (type == 0) {
-			sock.sendTo(data.c_str(),data.size(), host, destport);
-		}
-		else if (type == 1) {
-			
-			socka.sendTo(data.c_str(),data.size(),server,destport);
-		}
+		sock.sendTo(data.c_str(),data.size(), hostip, destport);
+		sock.cleanUp();
 	}
 	catch (SocketException &e) {
 	cerr << "\n" << e.what() << "\n";
@@ -83,24 +79,46 @@ int main () {
 	}
 	
 	char buf[BUFSIZE];
-	int i = 0;
+	int i = 0; //time to broadcast to server
+	int j = SUPDATE; //time to update ip files
+	string localip;
+	unsigned short localport;
+	string serverip;
+	unsigned short serverport;
 	while(read(gpsdata,buf,BUFSIZE)) {
 		string data(buf);
 		unsigned int found = data.find("$GPRMC");
 		if (found == 0) {
 			int type = 0;
-			bool test = bcast(data,id,type);
+			bool test = bcast(data,id,local,localport);
 			if (!test) {
 				cerr << "\nFAIL: " << data << endl;
 			}
 			++i;
 			if (i >= SERV_TIME) {
 				type = 1;
-				bool test = bcast(data,id,type);
+				bool test = bcast(data,id,host,hostport);
 				if (!test) {
 					cerr << "\nFAIL: " << data << endl;
 				}
 				i = 0;
+			}
+			++j;
+			if (j >= SUPDATE) {
+				int lip = open(CONFLOC+"lip",O_RDONLY);
+				int lport = open(CONFLOC+"lport",O_RDONLY);
+				int sip = open(CONFLOC+"sip",O_RDONLY);
+				int sport = open(CONFLOC+"sport",O_RDONLY);
+				if (lip == -1 || lport == -1 || sip == -1 || sport == -1) {
+					cerr << "A conf file failed to open, no update";
+					break;
+				}
+				localip = updateip(lip);
+				localport = updateport(lport);
+				server = updateip(sip);
+				serverport = updateport(sport);
+				}
+				j = 0;
 			}
 		}
 		sleep(0);
