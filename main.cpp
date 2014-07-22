@@ -13,8 +13,9 @@ using namespace std;
 #define MODEMFILE "/dev/ttyUSB2"
 #define BUFSIZE 10000
 #define ERRORSTRING "ERROR"
-const string host = "192.168.43.255";
-unsigned short host_port = 4551;
+const string host = "192.168.96.204";
+const unsigned short destport = 4551;
+const string server = "192.168.96.204";
 
 string ident () {
 	int modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
@@ -50,11 +51,16 @@ string ident () {
 	return ERRORSTRING;
 }
 //send data plus identifying info to host at host port
-bool bcast (string line,string id) {
+bool bcast (string line,string id,int type) {
 	try {
 		UDPSocket sock;
-		string data = line + id;
-		sock.sendTo(data.c_str(),data.size(), host, host_port);
+		string data = line + "," + id;
+		if (type == 0) {
+			sock.sendTo(data.c_str(),data.size(), host, destport);
+		}
+		else if (type == 1) {
+			sock.sendTo(data.c_str(),data.size(),server,destport);
+		}
 	}
 	catch (SocketException &e) {
 	cerr << e.what() << "\n";
@@ -77,15 +83,28 @@ int main () {
 	}
 	
 	char buf[BUFSIZE];
+	int i = 0;
 	while(read(gpsdata,buf,BUFSIZE)) {
 		string data(buf);
 		unsigned int found = data.find("GPRMC");
 		if (found == 1) {
-			cout << data << endl;
-			bool test = bcast(data,id);
+			//cout << data << endl;
+			int type = 0;
+			bool test = bcast(data,id,type);
 			if (!test) {
 				cerr << "FAIL: " << data << endl;
 			}
+			i++;
+			if (i >= 20) {
+				type = 1;
+				cout << "TO SERVER\n";
+				bool test = bcast(data,id,type);
+				if (!test) {
+					cerr << "FAIL: " << data << endl;
+				}
+				i = 0;
+			}
+			sleep(1);
 		}
 		sleep(0);
 	}
