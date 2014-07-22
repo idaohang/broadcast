@@ -10,6 +10,7 @@ clean:
 	rm -rf *.o *~ bcast
 install: all
 	cp bcast /usr/local/bin
+	cp info /usr/local/bin
 	chown root /usr/local/bin/bcast
 	chmod 1771 /usr/local/bin/bcast
 	mkdir -p  /etc/bcast
