@@ -22,7 +22,7 @@ UDPSocket socka;
 string ident () {
 	int modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (modem == -1) {
-		cerr << "Error opening modem\n";
+		cerr << "\nError opening modem\n";
 		return ERRORSTRING;
 	}
 	else {
@@ -31,19 +31,18 @@ string ident () {
 	char inf [ ] = "ATI1\r\n";
 	ssize_t wb = write(modem,inf,6);
 	if (wb < 4) {
-		cerr << "Error writing modem\n";
+		cerr << "\nError writing modem\n";
 	}
 	char buf[BUFSIZE];
 	sleep(1);
 	int i;
 	int ii = read(modem,buf,BUFSIZE);
-	//cout << ii << endl;
 	while(ii > 0) { 
 		string raw(buf, ii);
 		unsigned int found = raw.find("MEID:");
 		if (found != string::npos) {
 			string data = raw.substr(found+6, string::npos);
-			cout << "ID:" << data;
+			cout << "\nID:" << data;
 			close(modem);
 			return data;
 		}
@@ -55,9 +54,6 @@ string ident () {
 //send data plus identifying info to host at host port
 bool bcast (string line,string id,int type) {
 	try {
-		//UDPSocket sock;
-		//UDPSocket socka;
-
 		string data = line + "," + id;
 		if (type == 0) {
 			sock.sendTo(data.c_str(),data.size(), host, destport);
@@ -68,23 +64,22 @@ bool bcast (string line,string id,int type) {
 		}
 	}
 	catch (SocketException &e) {
-	cerr << e.what() << "\n";
+	cerr << "\n" << e.what() << "\n";
 	return false;
 	}
-	//cout << "DATA SENT\n";
 	return true;
 }
 int main () {
 	int gpsdata = open(GPSFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
 	if (gpsdata == -1) {
-		cerr << "error opening file\n";
+		cerr << "\nerror opening file\n";
 	}
 	else {
 		fcntl(gpsdata,F_SETFL,0);
 	}
 	string id = ident();
 	if (id == ERRORSTRING) {
-		cerr << "error obtaining id\n";
+		cerr << "\nerror obtaining id\n";
 	}
 	
 	char buf[BUFSIZE];
@@ -93,19 +88,17 @@ int main () {
 		string data(buf);
 		unsigned int found = data.find("$GPRMC");
 		if (found == 0) {
-			//cout << data << endl;
 			int type = 0;
 			bool test = bcast(data,id,type);
 			if (!test) {
-				cerr << "FAIL: " << data << endl;
+				cerr << "\nFAIL: " << data << endl;
 			}
 			++i;
 			if (i >= SERV_TIME) {
 				type = 1;
-				//cout << "TO SERVER\n";
 				bool test = bcast(data,id,type);
 				if (!test) {
-					cerr << "FAIL: " << data << endl;
+					cerr << "\nFAIL: " << data << endl;
 				}
 				i = 0;
 			}
@@ -113,7 +106,7 @@ int main () {
 		sleep(0);
 	}
 	
-	cerr << "End of file?\n";
+	cerr << "\nEnd of file?\n";
 	close(gpsdata);
 	return 1;
 }
