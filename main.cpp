@@ -6,6 +6,7 @@
 #include <cerrno>
 #include <fcntl.h>
 #include <termios.h>
+#include <ctime>
 #include "PracticalSocket.h"
 using namespace std;
 
@@ -13,16 +14,15 @@ using namespace std;
 #define MODEMFILE "/dev/ttyUSB2"
 #define BUFSIZE 10000
 #define ERRORSTRING "ERROR"
-#define SERV_TIME 45 // about 15 seconds
-#define SUPDATE 15000 //about 80 minutes
+#define SERV_TIME 15
+#define SUPDATE 3600 //one hour
 #define CONFLOC "/etc/bcast/"
 
 UDPSocket sock;
-UDPSocket socka;
 string ident () {
 	int modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (modem == -1) {
-		cerr << "\nError opening modem\n";
+		cerr << "\nError opening modem\n"; 
 		return ERRORSTRING;
 	}
 	else {
@@ -54,16 +54,29 @@ string ident () {
 //send data plus identifying info to host at host port
 bool bcast (string line,string id,string hostip,unsigned short destport) {
 	try {
-		UPDSocket sock;
 		string data = line + "," + id;
 		sock.sendTo(data.c_str(),data.size(), hostip, destport);
-		sock.cleanUp();
 	}
 	catch (SocketException &e) {
 	cerr << "\n" << e.what() << "\n";
 	return false;
 	}
 	return true;
+}
+string updateip (int fd) {
+	cout << "\nUpdating ip";
+	char buffer[BUFSIZE];
+	read(fd,&buffer,BUFSIZE);
+	string data(buffer);
+	cout << "\nIP: " << data;
+	return data;
+}
+unsigned short updateport (int fd) {
+	cout << "\nUpdating port";
+	unsigned short buffer;
+	read(fd,&buffer,sizeof(buffer));
+	cout << "\nPort: " << buffer;
+	return buffer;
 }
 int main () {
 	int gpsdata = open(GPSFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
@@ -79,52 +92,61 @@ int main () {
 	}
 	
 	char buf[BUFSIZE];
-	int i = 0; //time to broadcast to server
-	int j = SUPDATE; //time to update ip files
-	string localip;
-	unsigned short localport;
-	string serverip;
-	unsigned short serverport;
+	time_t starttime;
+	time(&starttime);
+	time_t curtime;
+	double seconds;
+	string localip = " ";
+	unsigned short localport = 0;
+	string serverip = " ";
+	unsigned short serverport = 0;
+	bool first = true;
 	while(read(gpsdata,buf,BUFSIZE)) {
+		if (seconds >= SUPDATE || first) {
+			int lip = open(CONFLOC"lip",O_RDONLY);
+			int lport = open(CONFLOC"lport",O_RDONLY);
+			int sip = open(CONFLOC"sip",O_RDONLY);
+			int sport = open(CONFLOC"sport",O_RDONLY);
+			if (lip == -1 || lport == -1 || sip == -1 || sport == -1) {
+				cerr << "\nA conf file failed to open, no update";
+				cerr <<"\nlip: " << lip << endl;
+				cerr << "\nlport: " << lport << endl;
+				cerr << "\nsip: " << sip << endl;
+				cerr << "\nsport: " << sport << endl;
+				sleep(0);
+				break;
+			}
+			localip = updateip(lip);
+			localport = updateport(lport);
+			serverip = updateip(sip);
+			serverport = updateport(sport);
+			close(lip);
+			close(lport);
+			close(sip);
+			close(sport);
+			first = false;
+		}
+
 		string data(buf);
 		unsigned int found = data.find("$GPRMC");
 		if (found == 0) {
-			int type = 0;
-			bool test = bcast(data,id,local,localport);
+			bool test = bcast(data,id,localip,localport);
 			if (!test) {
 				cerr << "\nFAIL: " << data << endl;
 			}
-			++i;
-			if (i >= SERV_TIME) {
-				type = 1;
-				bool test = bcast(data,id,host,hostport);
+			time(&curtime);
+			seconds = difftime(curtime,starttime);
+			cout << seconds;
+			if (seconds >= SERV_TIME) {
+				bool test = bcast(data,id,serverip,serverport);
 				if (!test) {
 					cerr << "\nFAIL: " << data << endl;
 				}
-				i = 0;
-			}
-			++j;
-			if (j >= SUPDATE) {
-				int lip = open(CONFLOC+"lip",O_RDONLY);
-				int lport = open(CONFLOC+"lport",O_RDONLY);
-				int sip = open(CONFLOC+"sip",O_RDONLY);
-				int sport = open(CONFLOC+"sport",O_RDONLY);
-				if (lip == -1 || lport == -1 || sip == -1 || sport == -1) {
-					cerr << "A conf file failed to open, no update";
-					break;
-				}
-				localip = updateip(lip);
-				localport = updateport(lport);
-				server = updateip(sip);
-				serverport = updateport(sport);
-				}
-				j = 0;
 			}
 		}
 		sleep(0);
 	}
-	
 	cerr << "\nEnd of file?\n";
 	close(gpsdata);
-	return 1;
+	return 0;
 }
