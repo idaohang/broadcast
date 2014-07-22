@@ -37,7 +37,7 @@ string ident () {
 	sleep(1);
 	int i;
 	int ii = read(modem,buf,BUFSIZE);
-	cout << ii << endl;
+	//cout << ii << endl;
 	while(ii > 0) { 
 		string raw(buf, ii);
 		unsigned int found = raw.find("MEID:");
@@ -102,7 +102,7 @@ int main () {
 			++i;
 			if (i >= SERV_TIME) {
 				type = 1;
-				cout << "TO SERVER\n";
+				//cout << "TO SERVER\n";
 				bool test = bcast(data,id,type);
 				if (!test) {
 					cerr << "FAIL: " << data << endl;
