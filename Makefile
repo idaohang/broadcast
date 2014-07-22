@@ -6,7 +6,8 @@ install: all
 	cp bcast /usr/local/bin
 	chown root /usr/local/bin/bcast
 	chmod 1771 /usr/local/bin/bcast
-	mkdir /etc/bcast
-	mv ./data/* /etc/bcast
+	mkdir -p  /etc/bcast
+	cp -rf ./broadcast  /etc
 uninstall: clean
-	rm /usr/local/bin/bcast
+	rm -f /usr/local/bin/bcast
+	rm -rf /etc/broadcast 

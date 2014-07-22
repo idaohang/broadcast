@@ -7,16 +7,20 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <ctime>
+#include <sstream>
 #include "PracticalSocket.h"
 using namespace std;
 
 #define GPSFILE "/dev/ttyUSB1"
 #define MODEMFILE "/dev/ttyUSB2"
-#define BUFSIZE 10000
+#define BUFSIZE 10000 // for modem and gps
+#define SBUFSIZE 16 // for conf updates
 #define ERRORSTRING "ERROR"
 #define SERV_TIME 15
 #define SUPDATE 3600 //one hour
-#define CONFLOC "/etc/bcast/"
+#define CONFLOC "/etc/broadcast/"
+#define DEFAULTPORT 4451
+#define FAIL 10 // Maximum # of failiures allowed
 
 UDPSocket sock;
 string ident () {
@@ -52,7 +56,7 @@ string ident () {
 	return ERRORSTRING;
 }
 //send data plus identifying info to host at host port
-bool bcast (string line,string id,string hostip,unsigned short destport) {
+bool bcast (string line,string id,string &hostip,unsigned short destport) {
 	try {
 		string data = line + "," + id;
 		sock.sendTo(data.c_str(),data.size(), hostip, destport);
@@ -64,24 +68,35 @@ bool bcast (string line,string id,string hostip,unsigned short destport) {
 	return true;
 }
 string updateip (int fd) {
-	cout << "\nUpdating ip";
-	char buffer[BUFSIZE];
-	read(fd,&buffer,BUFSIZE);
-	string data(buffer);
-	cout << "\nIP: " << data;
+	//cout << "\nUpdating ip";
+	char buffer[SBUFSIZE];
+	int i = read(fd,&buffer,SBUFSIZE);
+	string data(buffer,i-1);
+	//printf("\nIP: (%s)\n", buffer);
+	//cout << "\nIP: " << data;
+	//cout << "hello\n";
 	return data;
 }
 unsigned short updateport (int fd) {
-	cout << "\nUpdating port";
-	unsigned short buffer;
-	read(fd,&buffer,sizeof(buffer));
-	cout << "\nPort: " << buffer;
-	return buffer;
+	//cout << "\nUpdating port";
+	char buffer[SBUFSIZE];
+	int i = read(fd,&buffer,SBUFSIZE);
+	string data(buffer,i-1);
+	stringstream str(buffer);
+	//cout << "\nPort String: " << data;
+	unsigned int portshort;
+	str >> portshort;
+	//cout << "\nPort Short: " << portshort;
+	if (!portshort) {
+		cerr << "\nconversion failed";
+		return DEFAULTPORT;
+	}
+	return (unsigned short)portshort;
 }
 int main () {
 	int gpsdata = open(GPSFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
 	if (gpsdata == -1) {
-		cerr << "\nerror opening file\n";
+		cerr << "\nerror opening gps\n";
 	}
 	else {
 		fcntl(gpsdata,F_SETFL,0);
@@ -90,19 +105,29 @@ int main () {
 	if (id == ERRORSTRING) {
 		cerr << "\nerror obtaining id\n";
 	}
-	
 	char buf[BUFSIZE];
 	time_t starttime;
 	time(&starttime);
 	time_t curtime;
+	time(&curtime);
 	double seconds;
+	time_t ustarttime;
+	time(&ustarttime);
+	time_t ucurtime;
+	time(&ucurtime);
+	double useconds;
 	string localip = " ";
 	unsigned short localport = 0;
 	string serverip = " ";
 	unsigned short serverport = 0;
 	bool first = true;
+	int fail = 0;
 	while(read(gpsdata,buf,BUFSIZE)) {
-		if (seconds >= SUPDATE || first) {
+		useconds = difftime(ucurtime,ustarttime);
+		//cout << "USeconds: " << useconds << endl;
+		if (useconds >= SUPDATE || first) {
+			//cout << "\nUpdating conf\n";
+			time(&ustarttime);
 			int lip = open(CONFLOC"lip",O_RDONLY);
 			int lport = open(CONFLOC"lport",O_RDONLY);
 			int sip = open(CONFLOC"sip",O_RDONLY);
@@ -114,6 +139,8 @@ int main () {
 				cerr << "\nsip: " << sip << endl;
 				cerr << "\nsport: " << sport << endl;
 				sleep(0);
+				++fail;
+				cerr << "Conf FAIL: " << fail;
 				break;
 			}
 			localip = updateip(lip);
@@ -132,17 +159,25 @@ int main () {
 		if (found == 0) {
 			bool test = bcast(data,id,localip,localport);
 			if (!test) {
-				cerr << "\nFAIL: " << data << endl;
+				++fail;
+				cerr << "\nFAIL: " << fail << endl;
 			}
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
-			cout << seconds;
+			//cout << seconds << endl;
 			if (seconds >= SERV_TIME) {
+				time(&starttime);
 				bool test = bcast(data,id,serverip,serverport);
 				if (!test) {
-					cerr << "\nFAIL: " << data << endl;
+					++fail;
+					cerr << "\nServer FAIL: " << fail << endl;
 				}
 			}
+		}
+		if (fail >= FAIL) {
+			cerr << "\nMaximum Failiure. Exiting...\n";
+			close(gpsdata);
+			break;
 		}
 		sleep(0);
 	}
