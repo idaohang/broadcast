@@ -42,3 +42,6 @@ string ident () {
 	}
 	return ERRORSTRING;
 }
+void msleep(unsigned int seconds) {
+	usleep(seconds * 1000); //takes microseconds
+}
