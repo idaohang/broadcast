@@ -1,9 +1,15 @@
 #include <unistd.h>
 #include <iostream>
 #include <string>
-
+#include <cstring>
+#include <cstdio>
+#include <cerrno>
+#include <fcntl.h>
+using namespace std;
 #define ERRORSTRING "ERROR"
 #define IDBUFSIZE 10000
+#define MODEMFILE "/dev/ttyUSB2"
+
 string ident () {
 	int modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (modem == -1) {

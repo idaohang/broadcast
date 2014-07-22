@@ -1,5 +1,5 @@
 all: clean
-	g++ -O3 -Wall main.cpp PracticalSocket.cpp -o bcast
+	g++ -O3 -Wall main.cpp PracticalSocket.cpp ident.cpp -o bcast
 clean:
 	rm -rf *.o *~ bcast
 install: all

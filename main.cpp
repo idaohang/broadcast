@@ -13,7 +13,6 @@
 using namespace std;
 
 #define GPSFILE "/dev/ttyUSB1"
-#define MODEMFILE "/dev/ttyUSB2"
 #define BUFSIZE 10000 // for modem and gps
 #define SBUFSIZE 16 // for conf updates
 #define ERRORSTRING "ERROR"
