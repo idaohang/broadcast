@@ -1,5 +1,9 @@
+FILES  = PracticalSocket.cpp ident.cpp
+CPP = g++
+FLAGS = -Wall
 all: clean
-	g++ -O3 -Wall main.cpp PracticalSocket.cpp ident.cpp -o bcast
+	$(CPP) $(FLAGS) main.cpp $(FILES) -o bcast
+	$(CPP) $(FLAGS) info.cpp $(FILES) -o info 
 clean:
 	rm -rf *.o *~ bcast
 install: all
