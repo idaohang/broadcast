@@ -14,9 +14,10 @@ using namespace std;
 #define BUFSIZE 10000
 #define ERRORSTRING "ERROR"
 const string host = "192.168.96.204";
-const unsigned short destport = 4551;
-const string server = "192.168.96.204";
-
+const unsigned short destport = 4451;
+const string server = "24.248.166.181";
+UDPSocket sock;
+UDPSocket socka;
 string ident () {
 	int modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
 	if (modem == -1) {
@@ -53,13 +54,16 @@ string ident () {
 //send data plus identifying info to host at host port
 bool bcast (string line,string id,int type) {
 	try {
-		UDPSocket sock;
+		//UDPSocket sock;
+		//UDPSocket socka;
+
 		string data = line + "," + id;
 		if (type == 0) {
 			sock.sendTo(data.c_str(),data.size(), host, destport);
 		}
 		else if (type == 1) {
-			sock.sendTo(data.c_str(),data.size(),server,destport);
+			data += "A";
+			socka.sendTo(data.c_str(),data.size(),server,destport);
 		}
 	}
 	catch (SocketException &e) {
@@ -94,7 +98,7 @@ int main () {
 			if (!test) {
 				cerr << "FAIL: " << data << endl;
 			}
-			i++;
+			++i;
 			if (i >= 20) {
 				type = 1;
 				cout << "TO SERVER\n";
@@ -104,7 +108,6 @@ int main () {
 				}
 				i = 0;
 			}
-			sleep(1);
 		}
 		sleep(0);
 	}
