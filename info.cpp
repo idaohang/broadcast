@@ -11,10 +11,11 @@ using namespace std;
 #define BLANK "000"
 #define CONFLOC "/opt/bcast.conf"
 #define WAITTIME 3600
-char* loc = "/tr.aspx?M=" + c_ident();
+string place = "/tr.aspx?M=" + ident();
+char* loc = place.c_str();
 int fd;
 string data = BLANK;
-string connectto(char* addr) {
+string connectto(const char* addr) {
 	const char** buf;
 	int rb = http_fetch(addr,buf);
 	if (rb  == -1) {
@@ -24,14 +25,14 @@ string connectto(char* addr) {
 		return BLANK;
 	}
 	else {
-		string newstring(buf, rb - 1);
-		return newstring;
+		string str(buf, rb - 1);
+		return str;
 	}
 }
 int main () {
 	cout << "I Exist!\n";
-	char* addra = strcat("droid.taxitron.net",loc);
-	char* addrb = strcat("droid.taxitron.com",loc);
+	const char* addra = strcat("droid.taxitron.net",loc);
+	const char* addrb = strcat("droid.taxitron.com",loc);
 	cout << "\nADDRA: " << addra << endl;
 	cout << "\nADDRB: " << addrb << endl;
 	cout << "loc: " << loc << endl;

@@ -229,7 +229,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		strcat(requestBuf, "Connection: Close\r\n\r\n");
 
 		/* Now free any excess memory allocated to the buffer */
-		tmp = (char*))realloc(requestBuf, strlen(requestBuf) + 1);
+		tmp = (char*)realloc(requestBuf, strlen(requestBuf) + 1);
 		if(tmp == NULL)
 			{
 			free(url);
