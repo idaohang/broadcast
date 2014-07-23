@@ -31,6 +31,7 @@
 #include <sys/time.h>
 #include "http_fetcher.h"
 
+#define VERSION "1.1.0"
 /* Globals */
 int timeout = DEFAULT_READ_TIMEOUT;
 char *userAgent = NULL;
@@ -75,7 +76,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		}
 
 	/* Copy the url passed in into a buffer we can work with, change, etc. */
-	url = malloc(strlen(url_tmp)+1);
+	url = (char*)malloc(strlen(url_tmp)+1);
 	if(url == NULL)
 		{
 		errorSource = ERRNO;
@@ -106,7 +107,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 			}
 
 		/* Compose a request string */
-		requestBuf = malloc(bufsize);
+		requestBuf = (char*)malloc(bufsize);
 		if(requestBuf == NULL)
 			{
 			free(url);
@@ -228,7 +229,7 @@ int http_fetch(const char *url_tmp, char **fileBuf)
 		strcat(requestBuf, "Connection: Close\r\n\r\n");
 
 		/* Now free any excess memory allocated to the buffer */
-		tmp = realloc(requestBuf, strlen(requestBuf) + 1);
+		tmp = (char*))realloc(requestBuf, strlen(requestBuf) + 1);
 		if(tmp == NULL)
 			{
 			free(url);
@@ -623,7 +624,7 @@ void http_perror(const char *string)
 		else
 			{
 			/* The error string has a %d in it, we need to insert errorInt */
-			stringIndex = http_errlist[http_errno];
+			stringIndex = (char*)http_errlist[http_errno];
 			while(*stringIndex != '%')			/* Print up to the %d */
 				{
 				fputc(*stringIndex, stderr);
@@ -765,7 +766,7 @@ int makeSocket(const char *host)
     char *p;
 	
     /* Check for port number specified in URL */
-    p = strchr(host, ':');
+    p = (char*)strchr(host, ':');
     if(p)
         {
         port = atoi(p + 1);
@@ -807,7 +808,7 @@ int _checkBufSize(char **buf, int *bufsize, int more)
 	int roomLeft = *bufsize - (strlen(*buf) + 1);
 	if(roomLeft > more)
 		return 0;
-	tmp = realloc(*buf, *bufsize + more + 1);
+	tmp = (char*)realloc(*buf, *bufsize + more + 1);
 	if(tmp == NULL)
 		return -1;
 	*buf = tmp;
