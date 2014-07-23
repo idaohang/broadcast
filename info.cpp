@@ -5,24 +5,33 @@
 #include <cstdio>
 #include <cstring>
 #include "ident.h"
+#include "http_fetcher.h"
 using namespace std;
 #define BUFLEN 100000
 #define BLANK "000"
 #define CONFLOC "/opt/bcast.conf"
 #define WAITTIME 3600
-string loc = "/tr.aspx?M=" + ident();
+char* loc = "/tr.aspx?M=" + c_ident();
 int fd;
 string data = BLANK;
-int connectto(const char* addr) {
-	string place = addr+loc+" > "+CONFLOC;
-	char* curl = strcat("curl ",place.c_str());
-	system(curl);
-	return fd;
+string connectto(char* addr) {
+	const char** buf;
+	int rb = http_fetch(addr,buf);
+	if (rb  == -1) {
+		const char* errors;
+		errors = http_strerror();
+		cerr << errors;
+		return BLANK;
+	}
+	else {
+		string newstring(buf, rb - 1);
+		return newstring;
+	}
 }
 int main () {
 	cout << "I Exist!\n";
-	const char* addra = "droid.taxitron.net";
-	const char* addrb = "droid.taxitron.com";
+	char* addra = strcat("droid.taxitron.net",loc);
+	char* addrb = strcat("droid.taxitron.com",loc);
 	cout << "\nADDRA: " << addra << endl;
 	cout << "\nADDRB: " << addrb << endl;
 	cout << "loc: " << loc << endl;

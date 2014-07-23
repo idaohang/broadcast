@@ -1,7 +1,7 @@
 BFILES = PracticalSocket.cpp ident.cpp
-IFILES = ident.cpp happyhttp.cpp
+IFILES = ident.cpp http_fetcher.cpp
 CPP = g++
-FLAGS = -fpermissive
+FLAGS = -Wall
 
 all: clean bcast info
 bcast: main.cpp $(BFILES)
