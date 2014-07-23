@@ -1,5 +1,5 @@
 BFILES = PracticalSocket.cpp ident.cpp
-IFILES = ident.cpp http_fetcher.cpp
+IFILES = ident.cpp
 CPP = g++
 FLAGS = -Wall
 
