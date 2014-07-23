@@ -26,12 +26,8 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, string *userdata) {
 	}
 }
 string finder (string tag, string data) {
-	string begintag = "<" +tag+ ">";
-	cout << begintag << endl;
-	string endtag = "</" +tag+ ">";
-	cout << endtag << endl;
-	signed int startpoint = data.find(begintag);
-	signed int endpoint = data.find(endtag);
+	signed int startpoint = data.find("/><" + tag + ">");
+	signed int endpoint = data.find("</" + tag + "><br");
 	string result;
 	if (startpoint  == -1 || endpoint == -1) {
 		cerr << "Could not find " << tag << endl;
