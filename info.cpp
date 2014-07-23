@@ -5,17 +5,24 @@
 #include <cstdio>
 #include <cstring>
 #include "ident.h"
+#include <curl/curl.h>
 using namespace std;
 #define BUFLEN 100000
 #define BLANK "000"
 #define CONFLOC "/opt/bcast.conf"
 #define WAITTIME 3600
 string loc = "/tr.aspx?M=" + ident();
-int fd;
 string data = BLANK;
 string connectto(const char* addr) {
-//idk
-return BLANK;
+	curl_global_init(CURL_GLOBAL_NOTHING);
+	CURL *handle = curl_easy_init();
+	curl_easy_setopt(handle,CURLOPT_URL,addr);
+	char buf[BUFLEN];
+	curl_easy_setopt(handle,CURLOPT_WRITEDATA,buf);
+	curl_easy_perform(handle);
+	curl_easy_cleanup(handle);
+	curl_global_cleanup();
+	return "  ";
 }
 int main () {
 	cout << "I Exist!\n";
