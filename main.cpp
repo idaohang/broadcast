@@ -18,7 +18,7 @@ using namespace std;
 #define ERRORSTRING "ERROR"
 #define SERV_TIME 15
 #define SUPDATE 3600 //one hour
-#define CONFLOC "/etc/broadcast/"
+#define CONFLOC "/opt/broadcast/"
 #define DEFAULTPORT 4451
 #define FAIL 10 // Maximum # of failiures allowed
 

@@ -1,11 +1,13 @@
-FILES  = PracticalSocket.cpp ident.cpp
+BFILES = PracticalSocket.cpp ident.cpp
+IFILES = ident.cpp happyhttp.cpp
 CPP = g++
 FLAGS = -Wall
+
 all: clean bcast info
-bcast: main.cpp $(FILES)
-	$(CPP) $(FLAGS) main.cpp $(FILES) -o bcast
-info: info.cpp $(FILES)
-	$(CPP) $(FLAGS) info.cpp $(FILES) -o info 
+bcast: main.cpp $(BFILES)
+	$(CPP) $(FLAGS) main.cpp $(BFILES) -o bcast
+info: info.cpp $(IFILES)
+	$(CPP) $(FLAGS) info.cpp $(IFILES) -o info 
 clean:
 	rm -rf *.o *~ bcast
 install: all
@@ -13,8 +15,8 @@ install: all
 	cp info /usr/local/bin
 	chown root /usr/local/bin/bcast
 	chmod 1771 /usr/local/bin/bcast
-	mkdir -p  /etc/bcast
-	cp -rf ./broadcast  /etc
+	mkdir -p  /opt/
+	cp -rf ./broadcast  /opt
 uninstall: clean
 	rm -f /usr/local/bin/bcast
 	rm -rf /etc/broadcast 
