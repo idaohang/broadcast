@@ -5,42 +5,24 @@
 #include <cstdio>
 #include <cstring>
 #include "ident.h"
-#include "happyhttp.h"
 using namespace std;
 #define BUFLEN 100000
 #define BLANK "000"
 #define CONFLOC "/opt/bcast.conf"
-const char* loc = "/tr.aspx?M=" + c_ident();
+#define WAITTIME 3600
+string loc = "/tr.aspx?M=" + ident();
 int fd;
 string data = BLANK;
-int count = 0;
-//functions for connection
-void OnBegin (const happyhttp::Response* r, void* userdata) {
-	printf("Begin (%d,%s)",r->getstatus(),r->getreason());
-	count = 0;
-}
-void OnData (const happyhttp::Response* r,const void* userdata, const unsigned char* buf, int n) {
-	fread(buf, 1, n, stdout);
-	string newstring(buf,n);
-	data += newstring;
-	++count;
-}
-void OnComplete () {
-	cout << "Found data: " << data << endl;
-}
-string connectto(string addr) {
-	happyhttp::Connection conn(addr,80);
-	conn.setcallbacks(OnBegin,OnData,OnComplete);
-	conn.request("GET", loc, 0, 0, 0);
-	while(conn.outstanding()) {
-		conn.pump();
-	}
-	return data;
+int connectto(const char* addr) {
+	string place = addr+loc+" > "+CONFLOC;
+	char* curl = strcat("curl ",place.c_str());
+	system(curl);
+	return fd;
 }
 int main () {
 	cout << "I Exist!\n";
-	const string addra = "droid.taxitron.net";
-	const string addrb = "droid.taxitron.com";
+	const char* addra = "droid.taxitron.net";
+	const char* addrb = "droid.taxitron.com";
 	cout << "\nADDRA: " << addra << endl;
 	cout << "\nADDRB: " << addrb << endl;
 	cout << "loc: " << loc << endl;

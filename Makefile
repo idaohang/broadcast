@@ -1,7 +1,7 @@
 BFILES = PracticalSocket.cpp ident.cpp
 IFILES = ident.cpp happyhttp.cpp
 CPP = g++
-FLAGS = -Wall
+FLAGS = -fpermissive
 
 all: clean bcast info
 bcast: main.cpp $(BFILES)
