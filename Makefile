@@ -2,12 +2,13 @@ BFILES = PracticalSocket.cpp ident.cpp
 IFILES = ident.cpp
 CPP = g++
 FLAGS = -Wall
+CURL = -lcurl
 
 all: clean bcast info
 bcast: main.cpp $(BFILES)
 	$(CPP) $(FLAGS) main.cpp $(BFILES) -o bcast
 info: info.cpp $(IFILES)
-	$(CPP) $(FLAGS) info.cpp $(IFILES) -o info 
+	$(CPP) $(FLAGS) info.cpp $(IFILES) -o info $(CURL)
 clean:
 	rm -rf *.o *~ bcast
 install: all
