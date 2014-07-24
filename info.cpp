@@ -63,7 +63,7 @@ string finder (string tag, string data) {
 }
 int main () {
 	cout << "I Exist!\n";
-	//sleep(300); //5 minutes
+	sleep(300); //5 minutes?
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();
