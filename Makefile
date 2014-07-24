@@ -1,7 +1,7 @@
 BFILES = PracticalSocket.cpp ident.cpp
 IFILES = ident.cpp
 CPP = g++
-FLAGS = -Wall
+FLAGS = -Wall -O3
 CURL = -lcurl
 BINLOC = /usr/local/bin/
 CONFLOC = /opt/
