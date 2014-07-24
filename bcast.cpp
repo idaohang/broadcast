@@ -56,13 +56,9 @@ vector<string> updateip (int fd) {
 		v.push_back(x);
 	}
 	return v;
-	//printf("\nIP: (%s)\n", buffer);
-	//cout << "\nIP: " << data;
-	//cout << "hello\n";
-	//return data;
 }
 vector<unsigned short> updateport (int fd) {
-	cout << "\nUpdating port";
+	//cout << "\nUpdating port";
 	char buffer[SBUFSIZE];
 	int i = read(fd,&buffer,SBUFSIZE);
 	string data(buffer,i-1);
@@ -77,18 +73,6 @@ vector<unsigned short> updateport (int fd) {
 		v.push_back(portshort);
 	}
 	return v;
-	/*
-	stringstream str(xx);
-	//cout << "\nPort String: " << data;
-	unsigned int portshort;
-	str >> portshort;
-	//cout << "\nPort Short: " << portshort;
-	if (!portshort) {
-		cerr << "\nconversion failed";
-		return DEFAULTPORT;
-	}
-	return (unsigned short)portshort;
-	*/
 }
 
 int main () {
@@ -125,7 +109,7 @@ int main () {
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
 		if (useconds >= SUPDATE || first) {
-			cout << "\nUpdating conf\n";
+			//cout << "\nUpdating conf\n";
 			time(&ustarttime);
 			int sip = open(SIP,O_RDONLY);
 			int sport = open(SPORT,O_RDONLY);
@@ -136,23 +120,6 @@ int main () {
 				cerr << "lip: " << lip << " lport: " << " sip: " << sip << " sport: " << sport << endl;
 				break;
 			}
-			/*
-			int lip = open(CONFLOC"bcast.lip.conf",O_RDONLY);
-			int lport = open(CONFLOC"bcast.lport.conf",O_RDONLY);
-			int sip = open(CONFLOC"bcast.sip.conf",O_RDONLY);
-			int sport = open(CONFLOC"sport",O_RDONLY);
-			if (lip == -1 || lport == -1 || sip == -1 || sport == -1) {
-				cerr << "\nA conf file failed to open, no update";
-				cerr <<"\nlip: " << lip << endl;
-				cerr << "\nlport: " << lport << endl;
-				cerr << "\nsip: " << sip << endl;
-				cerr << "\nsport: " << sport << endl;
-				sleep(0);
-				++fail;
-				cerr << "Conf FAIL: " << fail;
-				break;
-			}
-			*/
 			localip = updateip(lip);
 			localport = updateport(lport);
 			serverip = updateip(sip);
@@ -162,6 +129,7 @@ int main () {
 			close(sip);
 			close(sport);
 			first = false;
+			cout << "\nConf updated successfully\n" << endl;
 		}
 
 		string data(buf);
@@ -179,6 +147,7 @@ int main () {
 			seconds = difftime(curtime,starttime);
 			//cout << seconds << endl;
 			if (seconds >= SERV_TIME) {
+				cout << "\nSERVER\n";
 				time(&starttime);
 				bool test = bcast(data,id,serverip[which],serverport[which]);
 				if (!test) {

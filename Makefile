@@ -17,7 +17,9 @@ install: all
 	cp bcast $(BINLOC)
 	cp info $(BINLOC)
 	chown root $(BINLOC)bcast
+	chown root $(BINLOC)info
 	chmod 1771 $(BINLOC)bcast
+	chmod 1771 $(BINLOC)info
 	mkdir -p  $(CONFLOC)
 	cp -rf ./conf/* $(CONFLOC)
 uninstall: clean
