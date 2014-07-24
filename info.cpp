@@ -90,23 +90,23 @@ int main () {
 
 			string tcp1 = finder("TCP1",data);
 			signed int tcp1colon = tcp1.find(":");
-			string tcp1ip = tcp1.substr(0,tcp1colon-1);
+			string tcp1ip = tcp1.substr(0,tcp1colon);
 			string tcp1port = tcp1.substr(tcp1colon+1);
 
 			string tcp2 = finder("TCP2",data);
 			signed int tcp2colon = tcp2.find(":");
-			string tcp2ip = tcp2.substr(0,tcp2colon-1);
+			string tcp2ip = tcp2.substr(0,tcp2colon);
 			string tcp2port = tcp2.substr(tcp2colon+1);
 
 			string tcp3 = finder("TCP3",data);
 			signed int tcp3colon = tcp3.find(":");
-			string tcp3ip = tcp3.substr(0,tcp3colon-1);
+			string tcp3ip = tcp3.substr(0,tcp3colon);
 			string tcp3port = tcp3.substr(tcp3colon+1);
 
 			string ips = tcp1ip + " " + tcp2ip + " " + tcp3ip + ";";
 			string ports = tcp1port + " " + tcp2port + " " + tcp3port + ";";
 			cout << "ips: " << ips << "\n";
-			cout << "ports" << ports << "\n";
+			cout << "ports: " << ports << "\n";
 			ofstream sip;
 			sip.open(IPCONF, ofstream::out | ofstream::trunc);
 			sip.write(ips.c_str(),ips.length());
