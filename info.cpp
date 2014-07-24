@@ -9,8 +9,8 @@
 using namespace std;
 #define BUFLEN 100000
 #define BLANK "000"
-#define CONF "/opt/broadcast.conf"
-#define LOCCONF "/opt/broadcast.local.conf"
+#define IPCONF "/opt/broadcast.sip.conf"
+#define PORTCONF "/opt/broadcast.sport.conf"
 #define WAITTIME 3600
 string loc = "/tr.aspx?M=" + ident();
 size_t write_callback(char *ptr, size_t size, size_t nmemb, string *userdata) {
@@ -63,7 +63,7 @@ string finder (string tag, string data) {
 }
 int main () {
 	cout << "I Exist!\n";
-	sleep(300); //5 minutes
+	//sleep(300); //5 minutes
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();
@@ -86,14 +86,35 @@ int main () {
 		}
 		if (!data.empty()) {
 			//find TCP 1, 2, and 3
+			//this needs to be a function...
+
 			string tcp1 = finder("TCP1",data);
+			signed int tcp1colon = tcp1.find(":");
+			string tcp1ip = tcp1.substr(0,tcp1colon-1);
+			string tcp1port = tcp1.substr(tcp1colon+1);
+
 			string tcp2 = finder("TCP2",data);
+			signed int tcp2colon = tcp2.find(":");
+			string tcp2ip = tcp2.substr(0,tcp2colon-1);
+			string tcp2port = tcp2.substr(tcp2colon+1);
+
 			string tcp3 = finder("TCP3",data);
-			string tcp = tcp1+" "+tcp2+" "+tcp3+";";
-			cout << "TCP: " << tcp << "\n";
-			ofstream conf;
-			conf.open(CONF, ofstream::out | ofstream::trunc);
-			conf.write(tcp.c_str(),tcp.length());
+			signed int tcp3colon = tcp3.find(":");
+			string tcp3ip = tcp3.substr(0,tcp3colon-1);
+			string tcp3port = tcp3.substr(tcp3colon+1);
+
+			string ips = tcp1ip + " " + tcp2ip + " " + tcp3ip + ";";
+			string ports = tcp1port + " " + tcp2port + " " + tcp3port + ";";
+			cout << "ips: " << ips << "\n";
+			cout << "ports" << ports << "\n";
+			ofstream sip;
+			sip.open(IPCONF, ofstream::out | ofstream::trunc);
+			sip.write(ips.c_str(),ips.length());
+
+			ofstream sport;
+			sport.open(PORTCONF, ofstream::out | ofstream::trunc);
+			sport.write(ports.c_str(),ports.length());
+
 			dostuff = false;
 		}
 		//cout << "\n\n";

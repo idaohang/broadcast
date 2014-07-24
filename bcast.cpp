@@ -1,3 +1,4 @@
+#include <vector>
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -8,6 +9,8 @@
 #include <termios.h>
 #include <ctime>
 #include <sstream>
+#include <algorithm>
+#include <iterator>
 #include "PracticalSocket.h"
 #include "ident.h"
 using namespace std;
@@ -18,7 +21,10 @@ using namespace std;
 #define ERRORSTRING "ERROR"
 #define SERV_TIME 15
 #define SUPDATE 3600 //one hour
-#define CONFLOC "/opt/broadcast/"
+#define SIP "/opt/broadcast.sip.conf"
+#define SPORT "/opt/broadcast.sport.conf"
+#define LIP "/opt/broadcast.lip.conf"
+#define LPORT "/opt/broadcast.lport.conf"
 #define DEFAULTPORT 4451
 #define FAIL 10 // Maximum # of failiures allowed
 
@@ -36,22 +42,43 @@ bool bcast (string line,string id,string &hostip,unsigned short destport) {
 	}
 	return true;
 }
-string updateip (int fd) {
+
+vector<string> updateip (int fd) {
 	//cout << "\nUpdating ip";
 	char buffer[SBUFSIZE];
+	vector<string> v;
 	int i = read(fd,&buffer,SBUFSIZE);
 	string data(buffer,i-1);
+	istringstream ss(data);
+	while(!ss.eof()) {
+		string x;
+		getline(ss,x,' ');
+		v.push_back(x);
+	}
+	return v;
 	//printf("\nIP: (%s)\n", buffer);
 	//cout << "\nIP: " << data;
 	//cout << "hello\n";
-	return data;
+	//return data;
 }
-unsigned short updateport (int fd) {
-	//cout << "\nUpdating port";
+vector<unsigned short> updateport (int fd) {
+	cout << "\nUpdating port";
 	char buffer[SBUFSIZE];
 	int i = read(fd,&buffer,SBUFSIZE);
 	string data(buffer,i-1);
-	stringstream str(buffer);
+	istringstream ss(data);
+	vector<unsigned short> v;
+	while(!ss.eof()) {
+		string x;
+		getline(ss,x,' ');
+		stringstream str(x);
+		unsigned short portshort;
+		str >> portshort;
+		v.push_back(portshort);
+	}
+	return v;
+	/*
+	stringstream str(xx);
 	//cout << "\nPort String: " << data;
 	unsigned int portshort;
 	str >> portshort;
@@ -61,7 +88,9 @@ unsigned short updateport (int fd) {
 		return DEFAULTPORT;
 	}
 	return (unsigned short)portshort;
+	*/
 }
+
 int main () {
 	int gpsdata = open(GPSFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
 	if (gpsdata == -1) {
@@ -85,21 +114,31 @@ int main () {
 	time_t ucurtime;
 	time(&ucurtime);
 	double useconds;
-	string localip = " ";
-	unsigned short localport = 0;
-	string serverip = " ";
-	unsigned short serverport = 0;
+	vector<string> localip;
+	vector<unsigned short> localport;
+	vector<string> serverip;
+	vector<unsigned short> serverport;
 	bool first = true;
 	int fail = 0;
 	while(read(gpsdata,buf,BUFSIZE)) {
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
 		if (useconds >= SUPDATE || first) {
-			//cout << "\nUpdating conf\n";
+			cout << "\nUpdating conf\n";
 			time(&ustarttime);
-			int lip = open(CONFLOC"lip",O_RDONLY);
-			int lport = open(CONFLOC"lport",O_RDONLY);
-			int sip = open(CONFLOC"sip",O_RDONLY);
+			int sip = open(SIP,O_RDONLY);
+			int sport = open(SPORT,O_RDONLY);
+			int lip = open(LIP,O_RDONLY);
+			int lport = open(LPORT,O_RDONLY);
+			if (sip == -1 || sport == -1 || lip == -1 || lport == -1) {
+				cerr << "\nFailed to open conf files. Retrying...\n";
+				cerr << "lip: " << lip << " lport: " << " sip: " << sip << " sport: " << sport << endl;
+				break;
+			}
+			/*
+			int lip = open(CONFLOC"bcast.lip.conf",O_RDONLY);
+			int lport = open(CONFLOC"bcast.lport.conf",O_RDONLY);
+			int sip = open(CONFLOC"bcast.sip.conf",O_RDONLY);
 			int sport = open(CONFLOC"sport",O_RDONLY);
 			if (lip == -1 || lport == -1 || sip == -1 || sport == -1) {
 				cerr << "\nA conf file failed to open, no update";
@@ -112,6 +151,7 @@ int main () {
 				cerr << "Conf FAIL: " << fail;
 				break;
 			}
+			*/
 			localip = updateip(lip);
 			localport = updateport(lport);
 			serverip = updateip(sip);
@@ -126,7 +166,7 @@ int main () {
 		string data(buf);
 		unsigned int found = data.find("$GPRMC");
 		if (found == 0) {
-			bool test = bcast(data,id,localip,localport);
+			bool test = bcast(data,id,localip[which],localport[which]);
 			if (!test) {
 				++fail;
 				cerr << "\nFAIL: " << fail << endl;
@@ -136,7 +176,7 @@ int main () {
 			//cout << seconds << endl;
 			if (seconds >= SERV_TIME) {
 				time(&starttime);
-				bool test = bcast(data,id,serverip,serverport);
+				bool test = bcast(data,id,serverip[which],serverport[which]);
 				if (!test) {
 					++fail;
 					cerr << "\nServer FAIL: " << fail << endl;

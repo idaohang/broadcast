@@ -5,7 +5,7 @@ FLAGS = -Wall
 CURL = -lcurl
 BINLOC = /usr/local/bin/
 CONFLOC = /opt/
-
+CONF = conf
 all: clean bcast info
 bcast: bcast.cpp $(BFILES)
 	$(CPP) $(FLAGS) bcast.cpp $(BFILES) -o bcast
