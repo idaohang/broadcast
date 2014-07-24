@@ -120,6 +120,7 @@ int main () {
 	vector<unsigned short> serverport;
 	bool first = true;
 	int fail = 0;
+	int which = 0;
 	while(read(gpsdata,buf,BUFSIZE)) {
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
@@ -166,6 +167,9 @@ int main () {
 		string data(buf);
 		unsigned int found = data.find("$GPRMC");
 		if (found == 0) {
+			if (which > 2) {
+				which = 0;
+			}
 			bool test = bcast(data,id,localip[which],localport[which]);
 			if (!test) {
 				++fail;
@@ -188,7 +192,7 @@ int main () {
 			close(gpsdata);
 			break;
 		}
-		msleep(100);
+		msleep(10);
 	}
 	cerr << "\nEnd of file?\n";
 	close(gpsdata);
