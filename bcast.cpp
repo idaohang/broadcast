@@ -148,7 +148,7 @@ int main () {
 			close(gpsdata);
 			break;
 		}
-		sleep(0);
+		msleep(100);
 	}
 	cerr << "\nEnd of file?\n";
 	close(gpsdata);
