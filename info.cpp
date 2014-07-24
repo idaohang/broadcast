@@ -9,7 +9,8 @@
 using namespace std;
 #define BUFLEN 100000
 #define BLANK "000"
-#define CONFLOC "log.log"
+#define CONF "/opt/broadcast.conf"
+#define LOCCONF "/opt/broadcast.local.conf"
 #define WAITTIME 3600
 string loc = "/tr.aspx?M=" + ident();
 size_t write_callback(char *ptr, size_t size, size_t nmemb, string *userdata) {
@@ -61,7 +62,8 @@ string finder (string tag, string data) {
 	return result;
 }
 int main () {
-	//cout << "I Exist!\n";
+	cout << "I Exist!\n";
+	sleep(300); //5 minutes
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();
@@ -87,14 +89,14 @@ int main () {
 			string tcp1 = finder("TCP1",data);
 			string tcp2 = finder("TCP2",data);
 			string tcp3 = finder("TCP3",data);
-			string tcp = tcp1+","+tcp2+","+tcp3+";";
-			//cout << "TCP: " << tcp << "\nTCP Length: " << tcp.length() << "\n";
-			//ofstream conf;
-			//conf.open(CONFLOC, ofstream::out | ofstream::trunc);
-			//conf.write(tcp.c_str(),tcp.length());
+			string tcp = tcp1+" "+tcp2+" "+tcp3+";";
+			cout << "TCP: " << tcp << "\n";
+			ofstream conf;
+			conf.open(CONF, ofstream::out | ofstream::trunc);
+			conf.write(tcp.c_str(),tcp.length());
+			dostuff = false;
 		}
-		msleep(100);
-		//cout << "\n\n\n\n";
+		//cout << "\n\n";
 	}
 	return 0;
 }

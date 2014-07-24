@@ -3,6 +3,8 @@ IFILES = ident.cpp
 CPP = g++
 FLAGS = -Wall
 CURL = -lcurl
+BINLOC = /usr/local/bin/
+CONFLOC = /opt/
 
 all: clean bcast info
 bcast: bcast.cpp $(BFILES)
@@ -12,12 +14,12 @@ info: info.cpp $(IFILES)
 clean:
 	rm -rf *.o *~ bcast
 install: all
-	cp bcast /usr/local/bin
-	cp info /usr/local/bin
-	chown root /usr/local/bin/bcast
-	chmod 1771 /usr/local/bin/bcast
-	mkdir -p  /opt/
-	cp -rf ./broadcast  /opt
+	cp bcast $(BINLOC)
+	cp info $(BINLOC)
+	chown root $(BINLOC)bcast
+	chmod 1771 $(BINLOC)bcast
+	mkdir -p  $(CONFLOC)
+	cp -rf ./conf/* $(CONFLOC)
 uninstall: clean
-	rm -f /usr/local/bin/bcast
-	rm -rf /etc/broadcast 
+	rm -f $(BINLOC)bcast $(BINLOC)info 
+	rm -rf $(CONFLOC)broadcast.conf $(CONFLOC)broadcast.local.conf
