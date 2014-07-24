@@ -5,8 +5,8 @@ FLAGS = -Wall
 CURL = -lcurl
 
 all: clean bcast info
-bcast: main.cpp $(BFILES)
-	$(CPP) $(FLAGS) main.cpp $(BFILES) -o bcast
+bcast: bcast.cpp $(BFILES)
+	$(CPP) $(FLAGS) bcast.cpp $(BFILES) -o bcast
 info: info.cpp $(IFILES)
 	$(CPP) $(FLAGS) info.cpp $(IFILES) -o info $(CURL)
 clean:
