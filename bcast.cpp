@@ -85,7 +85,7 @@ int main () {
 	int rb = read(gpsdata,buffer,BUFSIZE);
 	if(rb == -1) { //there is a serial adapter plugged in because we get no data
 		close(gpsdata);
-		gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NCTTY | O_NDELAY);
+		gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
 		if (gpsdata == -1) {
 			perror("GPS OPEN 2");
 		}
@@ -94,7 +94,7 @@ int main () {
 		string stuff(buffer,BUFSIZE);
 		if (stuff.find("$G") == -1) { //there is a serial adapter plugged in because we don't get gps data
 			close(gpsdata);
-			gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NCTTY | O_NDELAY);
+			gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
 			if (gpsdata == -1) {
 				perror("GPS OPEN 3");
 			}
@@ -122,6 +122,7 @@ int main () {
 	bool first = true;
 	int fail = 0;
 	int which = 0;
+	char buf[BUFSIZE];
 	while(read(gpsdata,buf,BUFSIZE)) {
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
