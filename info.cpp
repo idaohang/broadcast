@@ -42,7 +42,7 @@ string getdata(const char* addr) {
 	curl_global_cleanup();
 	//cout << "cleanup\n";
 	//process data
-	//cout << "Yay we have: " << data << endl;
+	cout << "Data: " << data << endl;
 	return data;
 
 }
@@ -54,32 +54,22 @@ string finder (string tag, string data) {
 		cerr << "Could not find " << tag << endl;
 	}
 	else {
-		//cout << tag << " Start Point: " << startpoint << endl;
-		//cout << tag << " End Point: " << endpoint << endl;
 		result = data.substr(startpoint+6,endpoint-(startpoint+6));
-		//cout << tag << ": " << result << endl << endl;
 	}
 	return result;
 }
 int main () {
-	cout << "I Exist!\n";
 	sleep(300); //5 minutes?
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();
 	const char* addrb = saddrb.c_str();
-	//cout << "\nADDRA: " << addra << endl;
-	//cout << "\nADDRB: " << addrb << endl;
-	//cout << "loc: " << loc << endl;
-	//cout << "To the loop!\n";
 	bool dostuff = true;
 	while(dostuff) {
 		string data;
 		data = getdata(addra);
-		//cout << "DATA: " << data << endl;
 		if(data.empty()) {
 			data = getdata(addrb);
-			//cout << "DATA: " << data << endl;
 		}
 		if(data.empty()) {
 			cerr << "\nNo data available. Retrying";
@@ -105,17 +95,20 @@ int main () {
 
 			string ips = tcp1ip + " " + tcp2ip + " " + tcp3ip + ";";
 			string ports = tcp1port + " " + tcp2port + " " + tcp3port + ";";
-			cout << "ips: " << ips << "\n";
-			cout << "ports: " << ports << "\n";
-			ofstream sip;
-			sip.open(IPCONF, ofstream::out | ofstream::trunc);
-			sip.write(ips.c_str(),ips.length());
-
-			ofstream sport;
-			sport.open(PORTCONF, ofstream::out | ofstream::trunc);
-			sport.write(ports.c_str(),ports.length());
-
-			dostuff = false;
+			cout << "\nIPs: " << ips << "\n";
+			cout << "\nPorts: " << ports << "\n";
+			if(tcp1.empty() && tcp2.empty() && tcp3.empty()) {
+				cerr << "No IP's found. Am I Authorized?\n";
+			}
+			else {
+				ofstream sip;
+				sip.open(IPCONF, ofstream::out | ofstream::trunc);
+				sip.write(ips.c_str(),ips.length());
+				ofstream sport;
+				sport.open(PORTCONF, ofstream::out | ofstream::trunc);
+				sport.write(ports.c_str(),ports.length());
+				dostuff = false;
+			}
 		}
 		//cout << "\n\n";
 	}

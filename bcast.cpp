@@ -15,7 +15,6 @@
 #include "ident.h"
 using namespace std;
 
-#define GPSFILE "/dev/ttyUSB1"
 #define BUFSIZE 10000 // for modem and gps
 #define SBUFSIZE 16 // for conf updates
 #define ERRORSTRING "ERROR"
@@ -26,7 +25,7 @@ using namespace std;
 #define LIP "/opt/broadcast.lip.conf"
 #define LPORT "/opt/broadcast.lport.conf"
 #define DEFAULTPORT 4451
-#define FAIL 10 // Maximum # of failiures allowed
+#define FAIL 30 // Maximum # of failiures allowed
 
 UDPSocket sock;
 
@@ -74,20 +73,38 @@ vector<unsigned short> updateport (int fd) {
 	}
 	return v;
 }
-
 int main () {
-	int gpsdata = open(GPSFILE, O_RDONLY | O_NOCTTY | O_NDELAY);
+	int gpsdata = open("/dev/ttyUSB0", O_RDONLY | O_NOCTTY | O_NDELAY);
 	if (gpsdata == -1) {
-		cerr << "\nerror opening gps\n";
+		perror("GPS OPEN");
 	}
 	else {
 		fcntl(gpsdata,F_SETFL,0);
+	}
+	char buffer[BUFSIZE];
+	int rb = read(gpsdata,buffer,BUFSIZE);
+	if(rb == -1) { //there is a serial adapter plugged in because we get no data
+		close(gpsdata);
+		gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NCTTY | O_NDELAY);
+		if (gpsdata == -1) {
+			perror("GPS OPEN 2");
+		}
+	}
+	else {
+		string stuff(buffer,BUFSIZE);
+		if (stuff.find("$G") == -1) { //there is a serial adapter plugged in because we don't get gps data
+			close(gpsdata);
+			gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NCTTY | O_NDELAY);
+			if (gpsdata == -1) {
+				perror("GPS OPEN 3");
+			}
+
+		}
 	}
 	string id = ident();
 	if (id == ERRORSTRING) {
 		cerr << "\nerror obtaining id\n";
 	}
-	char buf[BUFSIZE];
 	time_t starttime;
 	time(&starttime);
 	time_t curtime;
@@ -129,7 +146,7 @@ int main () {
 			close(sip);
 			close(sport);
 			first = false;
-			cout << "\nConf updated successfully\n" << endl;
+			cout << "\nBcast conf updated successfully\n" << endl;
 		}
 
 		string data(buf);
@@ -147,7 +164,7 @@ int main () {
 			seconds = difftime(curtime,starttime);
 			//cout << seconds << endl;
 			if (seconds >= SERV_TIME) {
-				cout << "\nSERVER\n";
+				//cout << "\nSERVER\n";
 				time(&starttime);
 				bool test = bcast(data,id,serverip[which],serverport[which]);
 				if (!test) {
