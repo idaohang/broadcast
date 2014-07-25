@@ -19,7 +19,7 @@ using namespace std;
 #define SBUFSIZE 16 // for conf updates
 #define ERRORSTRING "ERROR"
 #define SERV_TIME 15
-#define SUPDATE 3600 //one hour
+#define SUPDATE 330 //5 minutes 30 seconds
 #define SIP "/opt/broadcast.sip.conf"
 #define SPORT "/opt/broadcast.sport.conf"
 #define LIP "/opt/broadcast.lip.conf"
@@ -82,6 +82,7 @@ int main () {
 	else {
 		fcntl(gpsdata,F_SETFL,0);
 	}
+/*
 	char buffer[BUFSIZE];
 	int rb = read(gpsdata,buffer,BUFSIZE);
 	if(rb == -1) { //there is a serial adapter plugged in because we get no data
@@ -102,6 +103,7 @@ int main () {
 
 		}
 	}
+*/
 	string id = ident();
 	if (id == ERRORSTRING) {
 		cerr << "\nerror obtaining id\n";
@@ -124,6 +126,7 @@ int main () {
 	int fail = 0;
 	int which = 0;
 	char buf[BUFSIZE];
+	cout << "Bcast loop\n";
 	while(read(gpsdata,buf,BUFSIZE)) {
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
@@ -166,11 +169,12 @@ int main () {
 			}
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
-			//cout << seconds << endl;
+			cout << seconds << endl;
 			if (seconds >= SERV_TIME) {
-				//cout << "\nSERVER\n";
+				cout << "\nSERVER\n";
 				time(&starttime);
 				if(serverip[which] != BLANKIP) {
+					cout << "Trying " << serverip[which] << endl;
 					bool test = bcast(data,id,serverip[which],serverport[which]);
 					if (!test) {
 						++fail;

@@ -8,17 +8,20 @@
 using namespace std;
 #define ERRORSTRING "ERROR"
 #define IDBUFSIZE 10000
-#define MODEMFILE "/dev/ttyUSB2"
+#define MODEMFILE "/dev/ttyUSB1"
 
 string ident () {
-	int modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
-	if (modem == -1) {
-		cerr << "\nError opening modem\n"; 
-		return ERRORSTRING;
-	}
-	else {
-		fcntl(modem, F_SETFL, 0);
-	}
+	int modem;
+	do {
+		modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
+		if (modem == -1) {
+			cerr << "\nModem not open\n";
+			perror("MODEM OPEN");
+			sleep(2);
+		}
+	} while(modem == -1);
+	cout << "\nmodem open\n";
+	fcntl(modem, F_SETFL, 0);
 	char inf [ ] = "ATI1\r\n";
 	ssize_t wb = write(modem,inf,6);
 	if (wb < 4) {

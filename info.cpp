@@ -64,15 +64,13 @@ int main () {
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();
 	const char* addrb = saddrb.c_str();
-	bool dostuff = true;
-	while(dostuff) {
 		string data;
 		data = getdata(addra);
 		if(data.empty()) {
 			data = getdata(addrb);
 		}
 		if(data.empty()) {
-			cerr << "\nNo data available. Retrying";
+			cerr << "\nNo data available\n";
 		}
 		if (!data.empty()) {
 			//find TCP 1, 2, and 3
@@ -107,10 +105,8 @@ int main () {
 				ofstream sport;
 				sport.open(PORTCONF, ofstream::out | ofstream::trunc);
 				sport.write(ports.c_str(),ports.length());
-				dostuff = false;
 			}
 		}
 		//cout << "\n\n";
-	}
 	return 0;
 }
