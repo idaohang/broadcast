@@ -8,10 +8,10 @@ CONFLOC = /opt/
 CONF = conf
 all: clean bcast info
 
-bcast: bcast.cpp $(BFILES)
+bcast: bcast.cpp $(BFILES) bcast
 	$(CPP) $(FLAGS) bcast.cpp $(BFILES) -o bcast
 
-info: info.cpp $(IFILES)
+info: info.cpp $(IFILES) info
 	$(CPP) $(FLAGS) info.cpp $(IFILES) -o info $(CURL)
 
 clean:
