@@ -26,6 +26,7 @@ using namespace std;
 #define LPORT "/opt/broadcast.lport.conf"
 #define DEFAULTPORT 4451
 #define FAIL 30 // Maximum # of failiures allowed
+#define BLANKIP "0.0.0.0"
 
 UDPSocket sock;
 
@@ -92,7 +93,7 @@ int main () {
 	}
 	else {
 		string stuff(buffer,BUFSIZE);
-		if (stuff.find("$G") == -1) { //there is a serial adapter plugged in because we don't get gps data
+		if ((signed int)stuff.find("$G") == -1) { //there is a serial adapter plugged in because we don't get gps data
 			close(gpsdata);
 			gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
 			if (gpsdata == -1) {
@@ -156,10 +157,12 @@ int main () {
 			if (which > 2) {
 				which = 0;
 			}
-			bool test = bcast(data,id,localip[which],localport[which]);
-			if (!test) {
-				++fail;
-				cerr << "\nFAIL: " << fail << endl;
+			if (localip[which] != BLANKIP) {
+				bool test = bcast(data,id,localip[which],localport[which]);
+				if (!test) {
+					++fail;
+					cerr << "\nFAIL: " << fail << endl;
+				}
 			}
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
@@ -167,10 +170,12 @@ int main () {
 			if (seconds >= SERV_TIME) {
 				//cout << "\nSERVER\n";
 				time(&starttime);
-				bool test = bcast(data,id,serverip[which],serverport[which]);
-				if (!test) {
-					++fail;
-					cerr << "\nServer FAIL: " << fail << endl;
+				if(serverip[which] != BLANKIP) {
+					bool test = bcast(data,id,serverip[which],serverport[which]);
+					if (!test) {
+						++fail;
+						cerr << "\nServer FAIL: " << fail << endl;
+					}
 				}
 			}
 		}
