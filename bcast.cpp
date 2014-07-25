@@ -75,13 +75,15 @@ vector<unsigned short> updateport (int fd) {
 	return v;
 }
 int main () {
-	int gpsdata = open("/dev/ttyUSB0", O_RDONLY | O_NOCTTY | O_NDELAY);
-	if (gpsdata == -1) {
-		perror("GPS OPEN");
-	}
-	else {
-		fcntl(gpsdata,F_SETFL,0);
-	}
+	string id = ident();
+	int gpsdata;
+	do {
+		gpsdata = open("/dev/ttyUSB0", O_RDONLY | O_NOCTTY | O_NDELAY);
+		if (gpsdata == -1) {
+			perror("GPS OPEN");
+		}
+	} while(gpsdata == -1);
+	fcntl(gpsdata,F_SETFL,0);
 /*
 	char buffer[BUFSIZE];
 	int rb = read(gpsdata,buffer,BUFSIZE);
@@ -104,7 +106,6 @@ int main () {
 		}
 	}
 */
-	string id = ident();
 	if (id == ERRORSTRING) {
 		cerr << "\nerror obtaining id\n";
 	}
@@ -126,8 +127,8 @@ int main () {
 	int fail = 0;
 	int which = 0;
 	char buf[BUFSIZE];
-	cout << "Bcast loop\n";
 	while(read(gpsdata,buf,BUFSIZE)) {
+		//cout << "Bcast loop\n";
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
 		if (useconds >= SUPDATE || first) {
@@ -153,10 +154,11 @@ int main () {
 			first = false;
 			cout << "\nBcast conf updated successfully\n" << endl;
 		}
-
 		string data(buf);
+		//cout << "\nGPS DATA: " << data << "\n";
 		unsigned int found = data.find("$GPRMC");
 		if (found == 0) {
+			cout << "\ndata found\n";
 			if (which > 2) {
 				which = 0;
 			}
