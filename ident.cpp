@@ -8,7 +8,7 @@
 using namespace std;
 #define ERRORSTRING "ERROR"
 #define IDBUFSIZE 10000
-#define MODEMFILE "/dev/ttyUSB1"
+#define MODEMFILE "/dev/ttyUSB2"
 
 string ident () {
 	sleep(30);

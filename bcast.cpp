@@ -85,8 +85,9 @@ int main () {
 	unsigned short us_port = DEFAULTPORT;
 	string id = ident();
 	int gpsdata;
+
 	do {
-		gpsdata = open("/dev/ttyUSB0", O_RDONLY | O_NOCTTY | O_NDELAY);
+		gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
 		if (gpsdata == -1) {
 			perror("GPS OPEN");
 		}
@@ -133,7 +134,7 @@ int main () {
 	vector<unsigned short> serverport;
 	bool first = true;
 	int fail = 0;
-	int which = 0;
+	int numip = 0;
 	int rl = 0;
 	char buf[BUFSIZE];
 	rl = read(gpsdata,buf,BUFSIZE);
@@ -142,7 +143,6 @@ int main () {
 		time(&ucurtime);
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
-/*
 		if (useconds >= SUPDATE || first) {
 			cout << "\nUpdating conf\n";
 			time(&ustarttime);
@@ -166,7 +166,6 @@ int main () {
 			first = false;
 			cout << "\nBcast conf updated successfully\n" << endl;
 		}
-*/
 		string alldata(buf, rl);
 		//cout << "all data from buf\n";
 		string data = "000";
@@ -180,20 +179,18 @@ int main () {
 		//cout << "find data\n";
 		if (found == 0) {
 			//cout << "\ndata found\n";
-			//which++;
-			//cout << "WHICH ++";
-			if (which > 2) {
-				which = 0;
+			numip++;
+			//cout << "numip ++";
+			if (numip > 2) {
+				numip = 0;
 			}
-/*
-			if (localip[which] != BLANKIP) {
-				bool test = bcast(data,id,localip[which],localport[which]);
+			if (localip[numip] != BLANKIP) {
+				bool test = bcast(data,id,localip[numip],localport[numip]);
 				if (!test) {
 					++fail;
 					cerr << "\nFAIL: " << fail << endl;
 				}
 			}
-*/
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
 			//cout << seconds << endl;
