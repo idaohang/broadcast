@@ -25,6 +25,8 @@ using namespace std;
 #define LIP "/opt/broadcast.lip.conf"
 #define LPORT "/opt/broadcast.lport.conf"
 #define DEFAULTIP "24.248.166.184";
+//#define DEFAULTIP "192.168.96.204";
+//#define DEFAULTIP "24.248.166.181";
 #define DEFAULTPORT 4451
 #define FAIL 30 // Maximum # of failiures allowed
 #define BLANKIP "0.0.0.0"
@@ -36,12 +38,14 @@ bool bcast (string line,string id,string &hostip, unsigned short destport) {
 	try {
 		string data = line + "," + id;
 		sock.sendTo(data.c_str(),data.size(), hostip, destport);
-		cout << sock.getLocalPort() << endl;
+		cout << "Local Port: " << sock.getLocalPort() << "\n";
+
 	}
 	catch (SocketException &e) {
 	cerr << "\n" << e.what() << "\n";
 	return false;
 	}
+	sock.disconnect();
 	return true;
 }
 
