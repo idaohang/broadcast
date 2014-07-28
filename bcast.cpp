@@ -95,7 +95,7 @@ int main () {
 	int gpsdata;
 
 	do {
-		gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
+		gpsdata = GPSFile();
 		if (gpsdata == -1) {
 			perror("GPS OPEN");
 		}
