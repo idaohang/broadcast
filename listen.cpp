@@ -5,13 +5,13 @@
 using namespace std;
 
 int main() {
-	const unsigned short localport = 4551;
+	const unsigned short localport = 4451;
 	string foreignaddr = "192.168.96.51";
-	unsigned short foreignport = 4551;
+	unsigned short foreignport = 0;
 
 	UDPSocket sock(localport);
 	while (true) {
-		cout << "Listening on " << localport << "\n";
+		cout << "Listening on " << sock.getLocalAddress() << ":" << sock.getLocalPort() << "\n";
 		cout << "Listening for " << foreignaddr << ":" << foreignport << "\n";
 		char buf[BUFSIZE];
 		sock.recvFrom(buf,BUFSIZE,foreignaddr,foreignport);

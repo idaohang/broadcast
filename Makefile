@@ -9,7 +9,7 @@ CONF = conf
 all: clean bcast info
 
 bcast: bcast.cpp $(SOCK) $(ID)
-	$(CPP) $(FLAGS) bcast.cpp $(BFILES) -o bcast
+	$(CPP) $(FLAGS) bcast.cpp $(SOCK) $(ID) -o bcast
 
 info: info.cpp $(ID)
 	$(CPP) $(FLAGS) info.cpp $(ID) -o info $(CURL)
