@@ -8,10 +8,10 @@
 using namespace std;
 #define ERRORSTRING "ERROR"
 #define IDBUFSIZE 10000
-#define MODEMFILE "/dev/ttyUSB2"
+#define MODEMFILE "/dev/ttyUSB1"
 
 string ident () {
-	//sleep(30);
+	sleep(20);
 	int modem;
 	do {
 		modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
