@@ -19,19 +19,20 @@ using namespace std;
 #define SBUFSIZE 16 // for conf updates
 #define ERRORSTRING "ERROR"
 #define SERV_TIME 15
-#define SUPDATE 3600 //one hour
+#define SUPDATE 400 //5 minutes 30 seconds
 #define SIP "/opt/broadcast.sip.conf"
 #define SPORT "/opt/broadcast.sport.conf"
 #define LIP "/opt/broadcast.lip.conf"
 #define LPORT "/opt/broadcast.lport.conf"
+#define DEFAULTIP "24.248.166.181";
 #define DEFAULTPORT 4451
 #define FAIL 30 // Maximum # of failiures allowed
 #define BLANKIP "0.0.0.0"
 
-UDPSocket sock;
 
 //send data plus identifying info to host at host port
-bool bcast (string line,string id,string &hostip,unsigned short destport) {
+bool bcast (string line,string id,string &hostip, unsigned short destport) {
+	UDPSocket sock;
 	try {
 		string data = line + "," + id;
 		sock.sendTo(data.c_str(),data.size(), hostip, destport);
@@ -75,13 +76,18 @@ vector<unsigned short> updateport (int fd) {
 	return v;
 }
 int main () {
-	int gpsdata = open("/dev/ttyUSB0", O_RDONLY | O_NOCTTY | O_NDELAY);
-	if (gpsdata == -1) {
-		perror("GPS OPEN");
-	}
-	else {
-		fcntl(gpsdata,F_SETFL,0);
-	}
+	string s_ip = DEFAULTIP;
+	unsigned short us_port = DEFAULTPORT;
+	string id = ident();
+	int gpsdata;
+	do {
+		gpsdata = open("/dev/ttyUSB0", O_RDONLY | O_NOCTTY | O_NDELAY);
+		if (gpsdata == -1) {
+			perror("GPS OPEN");
+		}
+	} while(gpsdata == -1);
+	fcntl(gpsdata,F_SETFL,0);
+/*
 	char buffer[BUFSIZE];
 	int rb = read(gpsdata,buffer,BUFSIZE);
 	if(rb == -1) { //there is a serial adapter plugged in because we get no data
@@ -102,7 +108,7 @@ int main () {
 
 		}
 	}
-	string id = ident();
+*/
 	if (id == ERRORSTRING) {
 		cerr << "\nerror obtaining id\n";
 	}
@@ -123,12 +129,17 @@ int main () {
 	bool first = true;
 	int fail = 0;
 	int which = 0;
+	int rl = 0;
 	char buf[BUFSIZE];
-	while(read(gpsdata,buf,BUFSIZE)) {
+	rl = read(gpsdata,buf,BUFSIZE);
+	while(rl > 0) {
+		//cout << "Bcast loop\n";
+		time(&ucurtime);
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
+/*
 		if (useconds >= SUPDATE || first) {
-			//cout << "\nUpdating conf\n";
+			cout << "\nUpdating conf\n";
 			time(&ustarttime);
 			int sip = open(SIP,O_RDONLY);
 			int sport = open(SPORT,O_RDONLY);
@@ -150,13 +161,26 @@ int main () {
 			first = false;
 			cout << "\nBcast conf updated successfully\n" << endl;
 		}
-
-		string data(buf);
+*/
+		string alldata(buf, rl);
+		//cout << "all data from buf\n";
+		string data = "000";
+		//cout << "data init\n";
+		if (!alldata.empty()) {
+			//cout << "fill data";
+			data = alldata.substr(0,alldata.length() - 1);
+		}
+		//cout << "\nGPS DATA: " << data << "\n";
 		unsigned int found = data.find("$GPRMC");
+		//cout << "find data\n";
 		if (found == 0) {
+			//cout << "\ndata found\n";
+			//which++;
+			//cout << "WHICH ++";
 			if (which > 2) {
 				which = 0;
 			}
+/*
 			if (localip[which] != BLANKIP) {
 				bool test = bcast(data,id,localip[which],localport[which]);
 				if (!test) {
@@ -164,14 +188,16 @@ int main () {
 					cerr << "\nFAIL: " << fail << endl;
 				}
 			}
+*/
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
 			//cout << seconds << endl;
 			if (seconds >= SERV_TIME) {
-				//cout << "\nSERVER\n";
+				cout << "\nSERVER\n";
 				time(&starttime);
-				if(serverip[which] != BLANKIP) {
-					bool test = bcast(data,id,serverip[which],serverport[which]);
+				if(s_ip != BLANKIP) {
+					cout << "Trying " << s_ip << endl;
+					bool test = bcast(data,id,s_ip,us_port);
 					if (!test) {
 						++fail;
 						cerr << "\nServer FAIL: " << fail << endl;
@@ -180,11 +206,13 @@ int main () {
 			}
 		}
 		if (fail >= FAIL) {
-			cerr << "\nMaximum Failiure. Exiting...\n";
+			cerr << "\nMaximum Failiure. Rebooting\n";
 			close(gpsdata);
+			//system("reboot");
 			break;
 		}
-		msleep(10);
+		msleep(100);
+		rl = read(gpsdata,buf,BUFSIZE);
 	}
 	cerr << "\nEnd of file?\n";
 	close(gpsdata);

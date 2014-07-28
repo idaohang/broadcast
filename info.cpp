@@ -12,7 +12,6 @@ using namespace std;
 #define IPCONF "/opt/broadcast.sip.conf"
 #define PORTCONF "/opt/broadcast.sport.conf"
 #define WAITTIME 3600
-string loc = "/tr.aspx?M=" + ident();
 size_t write_callback(char *ptr, size_t size, size_t nmemb, string *userdata) {
 	//cout << "New Data: " << ptr << endl;
 	string newstr(ptr);
@@ -60,19 +59,18 @@ string finder (string tag, string data) {
 }
 int main () {
 	sleep(300); //5 minutes?
+	string loc = "/tr.aspx?M=" + ident();
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();
 	const char* addrb = saddrb.c_str();
-	bool dostuff = true;
-	while(dostuff) {
 		string data;
 		data = getdata(addra);
 		if(data.empty()) {
 			data = getdata(addrb);
 		}
 		if(data.empty()) {
-			cerr << "\nNo data available. Retrying";
+			cerr << "\nNo data available\n";
 		}
 		if (!data.empty()) {
 			//find TCP 1, 2, and 3
@@ -107,10 +105,8 @@ int main () {
 				ofstream sport;
 				sport.open(PORTCONF, ofstream::out | ofstream::trunc);
 				sport.write(ports.c_str(),ports.length());
-				dostuff = false;
 			}
 		}
 		//cout << "\n\n";
-	}
 	return 0;
 }
