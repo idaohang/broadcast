@@ -11,13 +11,14 @@ using namespace std;
 #define MODEMFILE "/dev/ttyUSB1"
 
 string ident () {
+	sleep(30);
 	int modem;
 	do {
 		modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
 		if (modem == -1) {
 			cerr << "\nModem not open\n";
 			perror("MODEM OPEN");
-			sleep(2);
+			sleep(5);
 		}
 	} while(modem == -1);
 	cout << "\nmodem open\n";
@@ -38,7 +39,7 @@ string ident () {
 			string data = raw.substr(found+6, string::npos);
 			cout << "\nID:" << data;
 			close(modem);
-			return data;
+			return data.substr(0,data.length() - 1);
 		}
 		i++;
 		ii = read(modem,buf,IDBUFSIZE);

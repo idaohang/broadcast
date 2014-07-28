@@ -12,7 +12,6 @@ using namespace std;
 #define IPCONF "/opt/broadcast.sip.conf"
 #define PORTCONF "/opt/broadcast.sport.conf"
 #define WAITTIME 3600
-string loc = "/tr.aspx?M=" + ident();
 size_t write_callback(char *ptr, size_t size, size_t nmemb, string *userdata) {
 	//cout << "New Data: " << ptr << endl;
 	string newstr(ptr);
@@ -60,6 +59,7 @@ string finder (string tag, string data) {
 }
 int main () {
 	sleep(300); //5 minutes?
+	string loc = "/tr.aspx?M=" + ident();
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();
