@@ -104,28 +104,6 @@ int main () {
 		}
 	} while(gpsdata == -1);
 	fcntl(gpsdata,F_SETFL,0);
-/*
-	char buffer[BUFSIZE];
-	int rb = read(gpsdata,buffer,BUFSIZE);
-	if(rb == -1) { //there is a serial adapter plugged in because we get no data
-		close(gpsdata);
-		gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
-		if (gpsdata == -1) {
-			perror("GPS OPEN 2");
-		}
-	}
-	else {
-		string stuff(buffer,BUFSIZE);
-		if ((signed int)stuff.find("$G") == -1) { //there is a serial adapter plugged in because we don't get gps data
-			close(gpsdata);
-			gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
-			if (gpsdata == -1) {
-				perror("GPS OPEN 3");
-			}
-
-		}
-	}
-*/
 	if (id == ERRORSTRING) {
 		cerr << "\nerror obtaining id\n";
 	}
