@@ -16,7 +16,7 @@
 using namespace std;
 
 #define BUFSIZE 10000 // for modem and gps
-#define SBUFSIZE 16 // for conf updates
+#define SBUFSIZE 50 // for conf updates
 #define ERRORSTRING "ERROR"
 #define SERV_TIME 15
 #define SUPDATE 400 //5 minutes 30 seconds
@@ -30,6 +30,7 @@ using namespace std;
 #define DEFAULTPORT 4451
 #define FAIL 30 // Maximum # of failiures allowed
 #define BLANKIP "0.0.0.0"
+#define NUM 3
 
 UDPSocket sock;
 
@@ -50,39 +51,46 @@ bool bcast (string line,string id,string &hostip, unsigned short destport) {
 }
 
 vector<string> updateip (int fd) {
-	//cout << "\nUpdating ip";
+	//cout << "\nUpdating ip\n";
 	char buffer[SBUFSIZE];
 	vector<string> v;
 	int i = read(fd,&buffer,SBUFSIZE);
 	string data(buffer,i-1);
 	istringstream ss(data);
-	while(!ss.eof()) {
-		string x;
-		getline(ss,x,' ');
+	string x;
+	while(ss >> x) {
+		cout << x << "\n";
 		v.push_back(x);
 	}
+	cout << "v 0 " << v[0] << "\n";
+	cout << "v 1 " << v[1] << "\n";
+	cout << "v 2 " << v[2] << "\n";
 	return v;
 }
 vector<unsigned short> updateport (int fd) {
-	//cout << "\nUpdating port";
+	cout << "\nUpdating port\n";
 	char buffer[SBUFSIZE];
 	int i = read(fd,&buffer,SBUFSIZE);
 	string data(buffer,i-1);
 	istringstream ss(data);
 	vector<unsigned short> v;
-	while(!ss.eof()) {
-		string x;
-		getline(ss,x,' ');
+	string x;
+	while(ss >> x) {
+		cout << x << endl;
 		stringstream str(x);
 		unsigned short portshort;
 		str >> portshort;
+		cout << portshort << "\n";
 		v.push_back(portshort);
+	}
+	for (int i = 0; i < 3; ++i) {
+		cout << "V[" << i << "]: " << v[i] << "\n";
 	}
 	return v;
 }
 int main () {
-	string s_ip = DEFAULTIP;
-	unsigned short us_port = DEFAULTPORT;
+	//string s_ip = DEFAULTIP;
+	//unsigned short us_port = DEFAULTPORT;
 	string id = ident();
 	int gpsdata;
 
@@ -134,10 +142,11 @@ int main () {
 	vector<unsigned short> serverport;
 	bool first = true;
 	int fail = 0;
-	int numip = 0;
+	int numip;
 	int rl = 0;
 	char buf[BUFSIZE];
 	rl = read(gpsdata,buf,BUFSIZE);
+	numip = 0;
 	while(rl > 0) {
 		//cout << "Bcast loop\n";
 		time(&ucurtime);
@@ -178,10 +187,10 @@ int main () {
 		unsigned int found = data.find("$GPRMC");
 		//cout << "find data\n";
 		if (found == 0) {
-			//cout << "\ndata found\n";
+			cout << "\ndata found\n";
 			numip++;
-			//cout << "numip ++";
-			if (numip > 2) {
+			//cout << "numip ++\n";
+			if (numip > NUM - 1) {
 				numip = 0;
 			}
 			if (localip[numip] != BLANKIP) {
@@ -193,13 +202,13 @@ int main () {
 			}
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
-			//cout << seconds << endl;
+			//cout << "Seconds: " << seconds << endl;
 			if (seconds >= SERV_TIME) {
 				cout << "\nSERVER\n";
 				time(&starttime);
-				if(s_ip != BLANKIP) {
-					cout << "Trying " << s_ip << endl;
-					bool test = bcast(data,id,s_ip,us_port);
+				if(serverip[numip] != BLANKIP) {
+					cout << "Trying " << serverip[numip] << endl;
+					bool test = bcast(data,id,serverip[numip],serverport[numip]);
 					if (!test) {
 						++fail;
 						cerr << "\nServer FAIL: " << fail << endl;
@@ -215,8 +224,9 @@ int main () {
 		}
 		msleep(100);
 		rl = read(gpsdata,buf,BUFSIZE);
+		cout << "\n";
 	}
-	cerr << "\nEnd of file?\n";
+	cerr << "\nModem has stopped transmitting data\n";
 	close(gpsdata);
 	return 0;
 }

@@ -91,8 +91,8 @@ int main () {
 			string tcp3ip = tcp3.substr(0,tcp3colon);
 			string tcp3port = tcp3.substr(tcp3colon+1);
 
-			string ips = tcp1ip + " " + tcp2ip + " " + tcp3ip + ";";
-			string ports = tcp1port + " " + tcp2port + " " + tcp3port + ";";
+			string ips = tcp1ip + " " + tcp2ip + " " + tcp3ip;
+			string ports = tcp1port + " " + tcp2port + " " + tcp3port;
 			cout << "\nIPs: " << ips << "\n";
 			cout << "\nPorts: " << ports << "\n";
 			if(tcp1.empty() && tcp2.empty() && tcp3.empty()) {

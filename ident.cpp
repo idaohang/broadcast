@@ -11,7 +11,7 @@ using namespace std;
 #define MODEMFILE "/dev/ttyUSB2"
 
 string ident () {
-	sleep(30);
+	//sleep(30);
 	int modem;
 	do {
 		modem = open(MODEMFILE, O_RDWR | O_NOCTTY | O_NDELAY);
@@ -37,7 +37,7 @@ string ident () {
 		unsigned int found = raw.find("MEID:");
 		if (found != string::npos) {
 			string data = raw.substr(found+6, string::npos);
-			cout << "Raw: " << raw << endl;
+			//cout << "Raw: " << raw << endl;
 			cout << "\nID:" << data;
 			close(modem);
 			return data.substr(0,data.length() - 1);
