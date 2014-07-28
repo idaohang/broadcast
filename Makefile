@@ -1,5 +1,5 @@
-BFILES = PracticalSocket.cpp ident.cpp
-IFILES = ident.cpp
+SOCK = PracticalSocket.cpp 
+ID = ident.cpp
 CPP = g++
 FLAGS = -Wall -O3
 CURL = -lcurl
@@ -8,12 +8,14 @@ CONFLOC = /opt/
 CONF = conf
 all: clean bcast info
 
-bcast: bcast.cpp $(BFILES)
+bcast: bcast.cpp $(SOCK) $(ID)
 	$(CPP) $(FLAGS) bcast.cpp $(BFILES) -o bcast
 
-info: info.cpp $(IFILES)
-	$(CPP) $(FLAGS) info.cpp $(IFILES) -o info $(CURL)
+info: info.cpp $(ID)
+	$(CPP) $(FLAGS) info.cpp $(ID) -o info $(CURL)
 
+listen: listen.cpp $(SOCK)
+	$(CPP) $(FLAGS) listen.cpp $(SOCK) -o listen
 clean:
 	rm -rf *.o *~ bcast
 
