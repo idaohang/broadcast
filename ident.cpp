@@ -70,9 +70,8 @@ int ModemFile () {
 	else if (dev == 2) return open("/dev/ttyUSB3",perm);
 	else return -1;
 }
-
 string ident () {
-	//sleep(30);
+	sleep(20);
 	int modem;
 	do {
 		modem = ModemFile();
