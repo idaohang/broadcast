@@ -20,6 +20,6 @@ $ECHO "/dev/ttyUSB"$i" "$IN" "$DR >> /opt/usb
 done
 if [ -e /opt/usb ]; then
 	echo "all is well"
-	#/usr/local/bin/info &
-	#/usr/local/bin/bcast &
+	/usr/local/bin/info &
+	/usr/local/bin/bcast &
 fi

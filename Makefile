@@ -6,6 +6,7 @@ CURL = -lcurl
 BINLOC = /usr/local/bin/
 CONFLOC = /opt/
 CONF = conf
+
 all: clean bcast info
 
 bcast: bcast.cpp $(SOCK) $(ID)
@@ -22,6 +23,7 @@ clean:
 install: all
 	cp bcast $(BINLOC)
 	cp info $(BINLOC)
+	cp devdetect.sh $(BINLOC)broadcast
 	mkdir -p  $(CONFLOC)
 	cp -rf ./conf/* $(CONFLOC)
 

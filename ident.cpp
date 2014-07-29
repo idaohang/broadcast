@@ -36,6 +36,7 @@ int device () {
 	id0 num0 dr0
 	id1 num1 dr1
 	id2 num2 dr2
+	id3 num3 dr3
 	*/
 	if((v[3] == "GobiSerial" && v[2] == "02") && (v[6] == "GobiSerial" && v[5] == "03")) {
 		//the gps is ttyUSB0 modem is 1
@@ -45,17 +46,25 @@ int device () {
 		//gps is ttyUSB1 modem is 2
 		return 1;
 	}
-	if(v[8] == "GobiSerial" && v[7] == "02") {
-		//the gps is ttyUSB2, I hope modem is 3
+	if((v[8] == "GobiSerial" && v[7] == "02") && (v[12] == "GobiSerial" && v[11] == "03")) {
+		//the gps is ttyUSB2, modem is 3
 		return 2;
 	}
-	else return -1;
+	if(v[12] == "GobiSerial" && v[11] == "03") {
+		//gps is 3 I hope modem is 4
+		return 3;
+	}
+	else {
+		cerr << "\nAutodetection failed\n";
+		return 0;
+	}
 }
 string GPSFile() {
 	int  dev = device();
 	if (dev == 0) return "/dev/ttyUSB0";
 	else if (dev == 1) return "/dev/ttyUSB1";
 	else if (dev == 2) return "/dev/ttyUSB2";
+	else if (dev == 3) return "/dev/ttyUSB3";
 	else if (dev == -1) return "-1";
 	else return "0";
 }
@@ -64,6 +73,7 @@ string ModemFile () {
 	if (dev == 0) return "/dev/ttyUSB1";
 	else if (dev == 1) return "/dev/ttyUSB2";
 	else if (dev == 2) return "/dev/ttyUSB3";
+	else if (dev == 3) return "/dev/ttyUSB4";
 	else if (dev == -1) return "-1";
 	else return "0";
 }
