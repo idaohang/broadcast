@@ -13,6 +13,7 @@ using namespace std;
 
 //returns location of GPS device for other functions
 int device () {
+	sleep(1);
 	int test = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
 	cout << "ttyUSB0: " << test << endl;
 	char buf[IDBUFSIZE];
