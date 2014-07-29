@@ -28,9 +28,8 @@ using namespace std;
 //#define DEFAULTIP "192.168.96.204";
 //#define DEFAULTIP "24.248.166.181";
 #define DEFAULTPORT 4451
-#define FAIL 30 // Maximum # of failiures allowed
+#define FAIL 10 // Maximum # of failiures allowed
 #define BLANKIP "0.0.0.0"
-#define NUM 3
 
 UDPSocket sock;
 
@@ -55,37 +54,41 @@ vector<string> updateip (int fd) {
 	char buffer[SBUFSIZE];
 	vector<string> v;
 	int i = read(fd,&buffer,SBUFSIZE);
-	string data(buffer,i-1);
+	string data(buffer,i);
 	istringstream ss(data);
 	string x;
 	while(ss >> x) {
-		cout << x << "\n";
+		//cout << x << "\n";
 		v.push_back(x);
 	}
+	/*
 	cout << "v 0 " << v[0] << "\n";
 	cout << "v 1 " << v[1] << "\n";
 	cout << "v 2 " << v[2] << "\n";
+	*/
 	return v;
 }
 vector<unsigned short> updateport (int fd) {
-	cout << "\nUpdating port\n";
+	//cout << "\nUpdating port\n";
 	char buffer[SBUFSIZE];
 	int i = read(fd,&buffer,SBUFSIZE);
-	string data(buffer,i-1);
+	string data(buffer,i);
 	istringstream ss(data);
 	vector<unsigned short> v;
 	string x;
 	while(ss >> x) {
-		cout << x << endl;
+		//cout << x << endl;
 		stringstream str(x);
 		unsigned short portshort;
 		str >> portshort;
-		cout << portshort << "\n";
+		//cout << portshort << "\n";
 		v.push_back(portshort);
 	}
+	/*
 	for (int i = 0; i < 3; ++i) {
 		cout << "V[" << i << "]: " << v[i] << "\n";
 	}
+	*/
 	return v;
 }
 int main () {
@@ -95,7 +98,7 @@ int main () {
 	int gpsdata;
 
 	do {
-		gpsdata = open("/dev/ttyUSB1", O_RDONLY | O_NOCTTY | O_NDELAY);
+		gpsdata = open("/dev/ttyUSB0", O_RDONLY | O_NOCTTY | O_NDELAY);
 		if (gpsdata == -1) {
 			perror("GPS OPEN");
 		}
@@ -142,18 +145,20 @@ int main () {
 	vector<unsigned short> serverport;
 	bool first = true;
 	int fail = 0;
-	int numip;
+	int lnumip;
+	int snumip;
 	int rl = 0;
 	char buf[BUFSIZE];
 	rl = read(gpsdata,buf,BUFSIZE);
-	numip = 0;
+	lnumip = 0;
+	snumip = 0;
 	while(rl > 0) {
 		//cout << "Bcast loop\n";
 		time(&ucurtime);
 		useconds = difftime(ucurtime,ustarttime);
 		//cout << "USeconds: " << useconds << endl;
 		if (useconds >= SUPDATE || first) {
-			cout << "\nUpdating conf\n";
+			cout << "\nUpdating Bcast conf\n";
 			time(&ustarttime);
 			int sip = open(SIP,O_RDONLY);
 			int sport = open(SPORT,O_RDONLY);
@@ -187,44 +192,54 @@ int main () {
 		unsigned int found = data.find("$GPRMC");
 		//cout << "find data\n";
 		if (found == 0) {
-			cout << "\ndata found\n";
-			numip++;
-			//cout << "numip ++\n";
-			if (numip > NUM - 1) {
-				numip = 0;
+			//cout << "\ndata found\n";
+			lnumip++;
+			//cout << lnumip << "\n";
+			if (lnumip > 2) {
+				lnumip = 0;
 			}
-			if (localip[numip] != BLANKIP) {
-				bool test = bcast(data,id,localip[numip],localport[numip]);
-				if (!test) {
-					++fail;
-					cerr << "\nFAIL: " << fail << endl;
-				}
+			if (localip[lnumip] != BLANKIP) {
+				bcast(data,id,localip[lnumip],localport[lnumip]);
 			}
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
 			//cout << "Seconds: " << seconds << endl;
+			if (snumip > 2) {
+				snumip = 0;
+			}
 			if (seconds >= SERV_TIME) {
 				cout << "\nSERVER\n";
 				time(&starttime);
-				if(serverip[numip] != BLANKIP) {
-					cout << "Trying " << serverip[numip] << endl;
-					bool test = bcast(data,id,serverip[numip],serverport[numip]);
+				if(serverip[snumip] != BLANKIP) {
+					cout << "Trying " << serverip[snumip] << endl;
+					bool test = bcast(data,id,serverip[snumip],serverport[snumip]);
 					if (!test) {
 						++fail;
 						cerr << "\nServer FAIL: " << fail << endl;
 					}
+					else {
+						fail = 0;
+					}
+					++snumip;
 				}
 			}
 		}
+		if (fail == 5 || fail == 1) {
+			++fail;
+			system("ifdown eth1");
+			sleep(1);
+			system("ifup eth1");
+			sleep(1);
+		}
 		if (fail >= FAIL) {
-			cerr << "\nMaximum Failiure. Rebooting\n";
+			cerr << "\nMaximum Failiure. Stopping\n";
 			close(gpsdata);
-			//system("reboot");
+			system("reboot");
 			break;
 		}
-		msleep(100);
+		msleep(10);
 		rl = read(gpsdata,buf,BUFSIZE);
-		cout << "\n";
+		//cout << "\n";
 	}
 	cerr << "\nModem has stopped transmitting data\n";
 	close(gpsdata);
