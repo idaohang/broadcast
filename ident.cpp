@@ -5,68 +5,51 @@
 #include <cstdio>
 #include <cerrno>
 #include <fcntl.h>
+#include <sstream>
+#include <vector>
 using namespace std;
 #define ERRORSTRING "ERROR"
 #define IDBUFSIZE 10000
 //#define MODEMFILE "/dev/ttyUSB2"
 //#define PERM = O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK;
-
+#define USBDATA "/opt/usb"
 //returns location of GPS device for other functions
 int device () {
-	sleep(1);
-	int test = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
-	cout << "ttyUSB0: " << test << endl;
+	int usb = open(USBDATA, O_RDONLY);
+	if (usb == -1) {
+		perror("usb open");
+		return -1;
+	}
 	char buf[IDBUFSIZE];
-	int rb = read(test,buf,IDBUFSIZE);
-	if (rb > 0) {
-		//is this the gps?
+	vector<string> v;
+	int rb = read(usb,buf,IDBUFSIZE);
+	while (rb > 0) {
 		string data(buf,rb);
-		unsigned int found = data.find("$");
-		if (found != string::npos)  {
-			close(test);
-			return 0;
+		istringstream ss(data);
+		string x;
+		while(ss >> x) {
+			v.push_back(x);
 		}
+		rb = read(usb,buf,IDBUFSIZE);
 	}
-	else if (rb == -1) {
-		//something went wrong
-		perror("Open ttyUSB0");
+	/*
+	id0 num0 dr0
+	id1 num1 dr1
+	id2 num2 dr2
+	*/
+	if((v[3] == "GobiSerial" && v[2] == "02") && (v[6] == "GobiSerial" && v[5] == "03")) {
+		//the gps is ttyUSB0 modem is 1
+		return 0;
 	}
-	close(test);
-
-	int test1 = open("/dev/ttyUSB1", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
-	cout << "ttyUSB1: " << test1 << endl;
-	char buf1[IDBUFSIZE];
-	int rb1 = read(test1,buf1,IDBUFSIZE);
-
-	if (rb1 >  0) {
-		string data1(buf1,rb1);
-		unsigned int found1 = data1.find("$");
-		if (found1 != string::npos) {
-			close(test1);
-			return 1;
-		}
+	if((v[5] == "GobiSerial" && v[4] == "02") && (v[8] == "GobiSerial" && v[7] == "03")) {
+		//gps is ttyUSB1 modem is 2
+		return 1;
 	}
-	else if (rb1 == -1) perror("Open ttyUSB1");
-	close(test1);
-
-	int test2 = open("/dev/ttyUSB2", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
-	cout << "ttyUSB2: " << test2 << endl;
-	char buf2[IDBUFSIZE];
-	int rb2 = read(test,buf,IDBUFSIZE);
-
-	if (rb2 > 0) {
-		string data2(buf2,rb2);
-		unsigned int found2 = data2.find("$");
-		if (found2 != string::npos) {
-			close(test2);
-			return 2;
-		}
+	if(v[8] == "GobiSerial" && v[7] == "02") {
+		//the gps is ttyUSB2, I hope modem is 3
+		return 2;
 	}
-	else if (rb == -1) perror("Open ttyUSB2");
-	close(test2);
-	//Should never get here
-	cerr << "No Operational Netgear AirCard 341U found\n";
-	return -1;
+	else return -1;
 }
 string GPSFile() {
 	int  dev = device();

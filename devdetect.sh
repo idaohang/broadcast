@@ -4,21 +4,22 @@ ECHO=/bin/echo
 GREP=/bin/grep
 UDEVADM=/sbin/udevadm
 SED=/bin/sed
-TOUCH=/bin/touch
 RM=/bin/rm
 
-$TOUCH /opt/udevlock
-udev0=$($UDEVADM info -a -n /dev/ttyUSB0)
-udev1=$($UDEVADM info -a -n /dev/ttyUSB1)
-udev2=$($UDEVADM info -a -n /dev/ttyUSB2)
+if [ -e  /opt/usb ]; then
+	$RM /opt/usb
+fi
 
-$ECHO $udev0 | sed "s/ /\n/g" | $GREP -m 1 "InterfaceNumber" | $AWK -F'"' '{print $2}' > /opt/usb0
-$ECHO $udev0 | sed "s/ /\n/g" | $GREP -m 1 "DRIVERS" | $AWK -F'"' '{print $2}' >> /opt/usb0
+for i in 0 1 2 3
+do
+udev=$($UDEVADM info -a -n /dev/ttyUSB$i)
+IN=$($ECHO $udev | sed "s/ /\n/g" | $GREP -m 1 "InterfaceNumber" | $AWK -F'"' '{print $2}') 
+DR=$($ECHO $udev | sed "s/ /\n/g" | $GREP -m 1 "DRIVERS" | $AWK -F'"' '{print $2}') 
 
-$ECHO $udev1 | sed "s/ /\n/g" | $GREP -m 1 "InterfaceNumber" | $AWK -F'"' '{print $2}' > /opt/usb1
-$ECHO $udev1 | sed "s/ /\n/g" | $GREP -m 1 "DRIVERS" | $AWK -F'"' '{print $2}' >> /opt/usb1
-
-$ECHO $udev2 | sed "s/ /\n/g" | $GREP -m 1 "InterfaceNumber" | $AWK -F'"' '{print $2}' > /opt/usb2
-$ECHO $udev2 | sed "s/ /\n/g" | $GREP -m 1 "DRIVERS" | $AWK -F'"' '{print $2}' >> /opt/usb2
-
-$RM /opt/udevlock
+$ECHO "/dev/ttyUSB"$i" "$IN" "$DR >> /opt/usb
+done
+if [ -e /opt/usb ]; then
+	echo "all is well"
+	#/usr/local/bin/info &
+	#/usr/local/bin/bcast &
+fi
