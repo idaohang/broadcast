@@ -22,7 +22,10 @@ int device () {
 		//is this the gps?
 		string data(buf,rb);
 		unsigned int found = data.find("$");
-		if (found != string::npos) return 0;
+		if (found != string::npos)  {
+			close(test);
+			return 0;
+		}
 	}
 	else if (rb == -1) {
 		//something went wrong
@@ -38,7 +41,10 @@ int device () {
 	if (rb1 >  0) {
 		string data1(buf1,rb1);
 		unsigned int found1 = data1.find("$");
-		if (found1 != string::npos) return 1;
+		if (found1 != string::npos) {
+			close(test1);
+			return 1;
+		}
 	}
 	else if (rb1 == -1) perror("Open ttyUSB1");
 	close(test1);
@@ -51,7 +57,10 @@ int device () {
 	if (rb2 > 0) {
 		string data2(buf2,rb2);
 		unsigned int found2 = data2.find("$");
-		if (found2 != string::npos) return 2;
+		if (found2 != string::npos) {
+			close(test2);
+			return 2;
+		}
 	}
 	else if (rb == -1) perror("Open ttyUSB2");
 	close(test2);

@@ -207,7 +207,7 @@ int main () {
 		if (fail >= FAIL) {
 			cerr << "\nMaximum Failiure. Stopping\n";
 			close(gpsdata);
-			//system("reboot");
+			system("reboot");
 			break;
 		}
 		msleep(10);
