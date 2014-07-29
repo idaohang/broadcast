@@ -4,7 +4,7 @@
 std::string ident ();
 const char* c_ident();
 void msleep(unsigned int seconds);
-int GPSFile();
-int MpdemFile();
+std::string GPSFile();
+std::string ModemFile();
 int device();
 #endif

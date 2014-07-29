@@ -54,7 +54,7 @@ vector<string> updateip (int fd) {
 	char buffer[SBUFSIZE];
 	vector<string> v;
 	int i = read(fd,&buffer,SBUFSIZE);
-	string data(buffer,i-1);
+	string data(buffer,i);
 	istringstream ss(data);
 	string x;
 	while(ss >> x) {
@@ -72,7 +72,7 @@ vector<unsigned short> updateport (int fd) {
 	//cout << "\nUpdating port\n";
 	char buffer[SBUFSIZE];
 	int i = read(fd,&buffer,SBUFSIZE);
-	string data(buffer,i-1);
+	string data(buffer,i);
 	istringstream ss(data);
 	vector<unsigned short> v;
 	string x;
@@ -98,11 +98,12 @@ int main () {
 	int gpsdata;
 
 	do {
-		gpsdata = GPSFile();
+		gpsdata = open(GPSFile().c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
 		if (gpsdata == -1) {
 			perror("GPS OPEN");
 		}
 	} while(gpsdata == -1);
+	//cout << "GPSDATA: " << gpsdata << endl;
 	fcntl(gpsdata,F_SETFL,0);
 	if (id == ERRORSTRING) {
 		cerr << "\nerror obtaining id\n";
@@ -190,7 +191,7 @@ int main () {
 				snumip = 0;
 			}
 			if (seconds >= SERV_TIME) {
-				cout << "\nSERVER\n";
+				//cout << "\nSERVER\n";
 				time(&starttime);
 				if(serverip[snumip] != BLANKIP) {
 					cout << "Trying " << serverip[snumip] << endl;

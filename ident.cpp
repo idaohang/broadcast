@@ -9,12 +9,12 @@ using namespace std;
 #define ERRORSTRING "ERROR"
 #define IDBUFSIZE 10000
 //#define MODEMFILE "/dev/ttyUSB2"
-
-const int perm = O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK;
+//#define PERM = O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK;
 
 //returns location of GPS device for other functions
 int device () {
-	int test = open("/dev/ttyUSB0",perm);
+	int test = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+	cout << "ttyUSB0: " << test << endl;
 	char buf[IDBUFSIZE];
 	int rb = read(test,buf,IDBUFSIZE);
 	if (rb > 0) {
@@ -29,7 +29,8 @@ int device () {
 	}
 	close(test);
 
-	int test1 = open("/dev/ttyUSB1", perm);
+	int test1 = open("/dev/ttyUSB1", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+	cout << "ttyUSB1: " << test1 << endl;
 	char buf1[IDBUFSIZE];
 	int rb1 = read(test1,buf1,IDBUFSIZE);
 
@@ -41,7 +42,8 @@ int device () {
 	else if (rb1 == -1) perror("Open ttyUSB1");
 	close(test1);
 
-	int test2 = open("/dev/ttyUSB2", perm);
+	int test2 = open("/dev/ttyUSB2", O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+	cout << "ttyUSB2: " << test2 << endl;
 	char buf2[IDBUFSIZE];
 	int rb2 = read(test,buf,IDBUFSIZE);
 
@@ -56,25 +58,27 @@ int device () {
 	cerr << "No Operational Netgear AirCard 341U found\n";
 	return -1;
 }
-int GPSFile() {
+string GPSFile() {
 	int  dev = device();
-	if (dev == 0) return open("/dev/ttyUSB0",perm);
-	else if (dev == 1) return open("/dev/ttyUSB1",perm);
-	else if (dev == 2) return open("/dev/ttyUSB2",perm);
-	else return -1;
+	if (dev == 0) return "/dev/ttyUSB0";
+	else if (dev == 1) return "/dev/ttyUSB1";
+	else if (dev == 2) return "/dev/ttyUSB2";
+	else if (dev == -1) return "-1";
+	else return "0";
 }
-int ModemFile () {
+string ModemFile () {
 	int dev = device();
-	if (dev == 0) return open("/dev/ttyUSB1",perm);
-	else if (dev == 1) return open("/dev/ttyUSB2",perm);
-	else if (dev == 2) return open("/dev/ttyUSB3",perm);
-	else return -1;
+	if (dev == 0) return "/dev/ttyUSB1";
+	else if (dev == 1) return "/dev/ttyUSB2";
+	else if (dev == 2) return "/dev/ttyUSB3";
+	else if (dev == -1) return "-1";
+	else return "0";
 }
 string ident () {
 	sleep(20);
 	int modem;
 	do {
-		modem = ModemFile();
+		modem = open(ModemFile().c_str(), O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
 		if (modem == -1) {
 			cerr << "\nModem not open\n";
 			perror("MODEM OPEN");
@@ -107,38 +111,7 @@ string ident () {
 	}
 	return ERRORSTRING;
 }
-const char* c_ident () {
-	int modem = ModemFile();
-	if (modem == -1) {
-		cerr << "\nError opening modem\n"; 
-		return ERRORSTRING;
-	}
-	else {
-		fcntl(modem, F_SETFL, 0);
-	}
-	char inf [ ] = "ATI1\r\n";
-	ssize_t wb = write(modem,inf,6);
-	if (wb < 4) {
-		cerr << "\nError writing modem\n";
-	}
-	char buf[IDBUFSIZE];
-	sleep(1);
-	int i;
-	int ii = read(modem,buf,IDBUFSIZE);
-	while(ii > 0) { 
-		string raw(buf, ii);
-		unsigned int found = raw.find("MEID:");
-		if (found != string::npos) {
-			string data = raw.substr(found+6, string::npos);
-			cout << "\nID:" << data;
-			close(modem);
-			return data.c_str();
-		}
-		i++;
-		ii = read(modem,buf,IDBUFSIZE);
-	}
-	return ERRORSTRING;
-}
+
 void msleep(unsigned int seconds) {
 	usleep(seconds * 1000); //takes microseconds
 }
