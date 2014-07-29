@@ -28,7 +28,7 @@ using namespace std;
 //#define DEFAULTIP "192.168.96.204";
 //#define DEFAULTIP "24.248.166.181";
 #define DEFAULTPORT 4451
-#define FAIL 30 // Maximum # of failiures allowed
+#define FAIL 10 // Maximum # of failiures allowed
 #define BLANKIP "0.0.0.0"
 
 UDPSocket sock;
@@ -178,11 +178,7 @@ int main () {
 				lnumip = 0;
 			}
 			if (localip[lnumip] != BLANKIP) {
-				bool test = bcast(data,id,localip[lnumip],localport[lnumip]);
-				if (!test) {
-					++fail;
-					cerr << "\nFAIL: " << fail << endl;
-				}
+				bcast(data,id,localip[lnumip],localport[lnumip]);
 			}
 			time(&curtime);
 			seconds = difftime(curtime,starttime);
@@ -200,9 +196,19 @@ int main () {
 						++fail;
 						cerr << "\nServer FAIL: " << fail << endl;
 					}
+					else {
+						fail = 0;
+					}
 					++snumip;
 				}
 			}
+		}
+		if (fail == 5 || fail == 1) {
+			++fail;
+			system("ifdown eth1");
+			sleep(1);
+			system("ifup eth1");
+			sleep(1);
 		}
 		if (fail >= FAIL) {
 			cerr << "\nMaximum Failiure. Stopping\n";
