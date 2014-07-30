@@ -59,6 +59,7 @@ string finder (string tag, string data) {
 }
 int main () {
 	sleep(300); //5 minutes?
+	device();
 	string loc = "/tr.aspx?M=" + ident();
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
@@ -75,11 +76,17 @@ int main () {
 		if (!data.empty()) {
 			//find TCP 1, 2, and 3
 			//this needs to be a function...
+			string xml[] = { "TCP1", "TCP2", "TCP3" };
+			string ips;
+			string ports;
+			for (int i = 0; i < 3; ++i) {
+				string tcp = finder(xml[i], data);
+				signed int tcpcolon = tcp.find(":");
+				ips += tcp.substr(0,tcpcolon) + " ";
+				ports += tcp.substr(tcpcolon+1) + " ";
+			}
 
-			string tcp1 = finder("TCP1",data);
-			signed int tcp1colon = tcp1.find(":");
-			string tcp1ip = tcp1.substr(0,tcp1colon);
-			string tcp1port = tcp1.substr(tcp1colon+1);
+			/*
 
 			string tcp2 = finder("TCP2",data);
 			signed int tcp2colon = tcp2.find(":");
@@ -93,19 +100,19 @@ int main () {
 
 			string ips = tcp1ip + " " + tcp2ip + " " + tcp3ip;
 			string ports = tcp1port + " " + tcp2port + " " + tcp3port;
+			*/
 			cout << "\nIPs: " << ips << "\n";
 			cout << "\nPorts: " << ports << "\n";
-			if(tcp1.empty() && tcp2.empty() && tcp3.empty()) {
+			if(ips.length() < 4 && ports.length() < 4) {
 				cerr << "No IP's found. Am I Authorized?\n";
 			}
-			else {
-				ofstream sip;
-				sip.open(IPCONF, ofstream::out | ofstream::trunc);
-				sip.write(ips.c_str(),ips.length());
-				ofstream sport;
-				sport.open(PORTCONF, ofstream::out | ofstream::trunc);
-				sport.write(ports.c_str(),ports.length());
-			}
+			
+			ofstream sip;
+			sip.open(IPCONF, ofstream::out | ofstream::trunc);
+			sip.write(ips.c_str(),ips.length());
+			ofstream sport;
+			sport.open(PORTCONF, ofstream::out | ofstream::trunc);
+			sport.write(ports.c_str(),ports.length());
 		}
 		//cout << "\n\n";
 	return 0;

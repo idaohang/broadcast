@@ -1,10 +1,10 @@
 #ifndef _IDENT_H
 #define _IDENT_H
 #include <string>
-std::string ident ();
-const char* c_ident();
+std::string ident();
 void msleep(unsigned int seconds);
-std::string GPSFile();
-std::string ModemFile();
-int device();
+void device();
+extern std::string modem;
+extern std::string gps;
+extern std::string serport;
 #endif

@@ -12,11 +12,13 @@ fi
 
 for i in 0 1 2 3
 do
-udev=$($UDEVADM info -a -n /dev/ttyUSB$i)
-IN=$($ECHO $udev | sed "s/ /\n/g" | $GREP -m 1 "InterfaceNumber" | $AWK -F'"' '{print $2}') 
-DR=$($ECHO $udev | sed "s/ /\n/g" | $GREP -m 1 "DRIVERS" | $AWK -F'"' '{print $2}') 
+	if [ -e /dev/ttyUSB$i ]; then
+		udev=$($UDEVADM info -a -n /dev/ttyUSB$i)
+		IN=$($ECHO $udev | $SED "s/ /\n/g" | $GREP -m 1 "InterfaceNumber" | $AWK -F'"' '{print $2}') 
+		DR=$($ECHO $udev | $SED "s/ /\n/g" | $GREP -m 1 "DRIVERS" | $AWK -F'"' '{print $2}') 
 
-$ECHO "/dev/ttyUSB"$i" "$IN" "$DR >> /opt/usb
+		$ECHO "/dev/ttyUSB"$i" "$IN" "$DR >> /opt/usb
+	fi
 done
 if [ -e /opt/usb ]; then
 	echo "all is well"

@@ -32,6 +32,9 @@ using namespace std;
 #define BLANKIP "0.0.0.0"
 
 UDPSocket sock;
+string gps;
+string modem;
+string serport;
 
 //send data plus identifying info to host at host port
 bool bcast (string line,string id,string &hostip, unsigned short destport) {
@@ -92,13 +95,15 @@ vector<unsigned short> updateport (int fd) {
 	return v;
 }
 int main () {
+	device();
 	//string s_ip = DEFAULTIP;
 	//unsigned short us_port = DEFAULTPORT;
 	string id = ident();
 	int gpsdata;
+	cout << "data: ("<< gps <<") (" << modem << ")" << endl;
 
 	do {
-		gpsdata = open(GPSFile().c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+		gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
 		if (gpsdata == -1) {
 			perror("GPS OPEN");
 		}
