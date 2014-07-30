@@ -1,31 +1,6 @@
-#include <vector>
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <cstring>
-#include <cstdio>
-#include <cerrno>
-#include <fcntl.h>
-#include <termios.h>
-#include <ctime>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include "PracticalSocket.h"
 #include "ident.h"
 using namespace std;
-
-#define SIP "/opt/broadcast.sip.conf"
-#define SPORT "/opt/broadcast.sport.conf"
-#define LIP "/opt/broadcast.lip.conf"
-#define LPORT "/opt/broadcast.lport.conf"
-#define DEFAULTIP "24.248.166.184";
-//#define DEFAULTIP "192.168.96.204";
-//#define DEFAULTIP "24.248.166.181";
-#define DEFAULTPORT 4451
-#define FAIL 10 // Maximum # of failiures allowed
-#define BLANKIP "0.0.0.0"
-
+string id;
 UDPSocket sock;
 string gps;
 string modem;
@@ -85,9 +60,9 @@ vector<unsigned short> updateport (string data) {
 }
 int main () {
 	device();
+	id = ident();
 	//string s_ip = DEFAULTIP;
 	//unsigned short us_port = DEFAULTPORT;
-	string id = ident();
 	int gpsdata;
 
 	do {

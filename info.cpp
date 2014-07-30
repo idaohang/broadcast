@@ -1,17 +1,5 @@
-#include <iostream>
-#include <string>
-#include <unistd.h>
-#include <cstdio>
-#include <cstring>
-#include <fstream>
-#include <curl/curl.h>
 #include "ident.h"
-using namespace std;
-#define BUFLEN 100000
-#define BLANK "000"
-#define IPCONF "/opt/broadcast.sip.conf"
-#define PORTCONF "/opt/broadcast.sport.conf"
-#define WAITTIME 3600
+
 size_t write_callback(char *ptr, size_t size, size_t nmemb, string *userdata) {
 	//cout << "New Data: " << ptr << endl;
 	string newstr(ptr);
@@ -41,7 +29,7 @@ string getdata(const char* addr) {
 	curl_global_cleanup();
 	//cout << "cleanup\n";
 	//process data
-	cout << "Data: " << data << endl;
+	//cout << "Data: " << data << endl;
 	return data;
 
 }
@@ -58,7 +46,7 @@ string finder (string tag, string data) {
 	return result;
 }
 bool info () {
-	string loc = "/tr.aspx?M=" + ident();
+	string loc = "/tr.aspx?M=" + id;
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
 	const char* addra = saddra.c_str();

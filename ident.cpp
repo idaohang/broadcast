@@ -1,22 +1,4 @@
-#include <unistd.h>
-#include <iostream>
-#include <string>
-#include <cstring>
-#include <cstdio>
-#include <cerrno>
-#include <fcntl.h>
-#include <sstream>
-#include <vector>
-#include <cstdlib>
 #include "ident.h"
-using namespace std;
-#define ERRORSTRING "ERROR"
-#define IDBUFSIZE 10000
-//#define MODEMFILE "/dev/ttyUSB2"
-//#define PERM = O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK;
-#define USBDATA "/opt/usb"
-//returns location of GPS device for other functions
-
 void device () {
 	int usb = open(USBDATA, O_RDONLY);
 	if (usb == -1) {
@@ -64,28 +46,6 @@ void device () {
 	cout << "modem: " << modem << endl;
 }
 
-/*
-string GPSFile() {
-	int  dev = device();
-
-	if (dev == 0) return "/;
-	else if (dev == 1) return "/dev/ttyUSB1";
-	else if (dev == 2) return "/dev/ttyUSB2";
-	else if (dev == 3) return "/dev/ttyUSB3";
-	else if (dev == -1) return "-1";
-	else return "0";
-
-}
-string ModemFile () {
-	int dev = device();
-	if (dev == 0) return "/dev/ttyUSB1";
-	else if (dev == 1) return "/dev/ttyUSB2";
-	else if (dev == 2) return "/dev/ttyUSB3";
-	else if (dev == 3) return "/dev/ttyUSB4";
-	else if (dev == -1) return "-1";
-	else return "0";
-}
-*/
 string ident () {
 	sleep(20);
 	int modemfile;

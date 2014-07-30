@@ -5,7 +5,7 @@ BINLOC = /usr/local/bin/
 
 all: clean bcast
 
-bcast: bcast.cpp $(FILES)
+bcast: $(FILES)
 	$(CPP) $(FLAGS) $(FILES) -o bcast
 clean:
 	rm -rf *.o *~ bcast
