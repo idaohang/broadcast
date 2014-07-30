@@ -21,7 +21,7 @@ do
 	fi
 done
 if [ -e /opt/usb ]; then
-	echo "all is well"
+	echo "\nall is well"
 	/usr/local/bin/info &
 	/usr/local/bin/bcast &
 fi
