@@ -57,9 +57,7 @@ string finder (string tag, string data) {
 	}
 	return result;
 }
-int main () {
-	sleep(300); //5 minutes?
-	device();
+bool info () {
 	string loc = "/tr.aspx?M=" + ident();
 	string saddra = "droid.taxitron.net"+loc;
 	string saddrb = "droid.taxitron.com"+loc;
@@ -96,7 +94,7 @@ int main () {
 			string tcp3 = finder("TCP3",data);
 			signed int tcp3colon = tcp3.find(":");
 			string tcp3ip = tcp3.substr(0,tcp3colon);
-			string tcp3port = tcp3.substr(tcp3colon+1);
+ 			string tcp3port = tcp3.substr(tcp3colon+1);
 
 			string ips = tcp1ip + " " + tcp2ip + " " + tcp3ip;
 			string ports = tcp1port + " " + tcp2port + " " + tcp3port;
@@ -105,14 +103,22 @@ int main () {
 			cout << "\nPorts: " << ports << "\n";
 			if(ips.length() < 4 && ports.length() < 4) {
 				cerr << "No IP's found. Am I Authorized?\n";
+				return false;
 			}
-			
-			ofstream sip;
-			sip.open(IPCONF, ofstream::out | ofstream::trunc);
-			sip.write(ips.c_str(),ips.length());
-			ofstream sport;
-			sport.open(PORTCONF, ofstream::out | ofstream::trunc);
-			sport.write(ports.c_str(),ports.length());
+			else
+			{
+				sip = ips;
+				sport = ports;
+				/*
+				ofstream sip;
+				sip.open(IPCONF, ofstream::out | ofstream::trunc);
+				sip.write(ips.c_str(),ips.length());
+				ofstream sport;
+			 	sport.open(PORTCONF, ofstream::out | ofstream::trunc);
+				sport.write(ports.c_str(),ports.length());
+				*/
+				return true;
+			}
 		}
 		//cout << "\n\n";
 	return 0;

@@ -15,11 +15,6 @@
 #include "ident.h"
 using namespace std;
 
-#define BUFSIZE 10000 // for modem and gps
-#define SBUFSIZE 50 // for conf updates
-#define ERRORSTRING "ERROR"
-#define SERV_TIME 15
-#define SUPDATE 400 //5 minutes 30 seconds
 #define SIP "/opt/broadcast.sip.conf"
 #define SPORT "/opt/broadcast.sport.conf"
 #define LIP "/opt/broadcast.lip.conf"
@@ -35,29 +30,26 @@ UDPSocket sock;
 string gps;
 string modem;
 string serport;
-
+string sip;
+string sport;
 //send data plus identifying info to host at host port
 bool bcast (string line,string id,string &hostip, unsigned short destport) {
 	try {
 		string data = line + "," + id;
 		sock.sendTo(data.c_str(),data.size(), hostip, destport);
-		cout << "Local Port: " << sock.getLocalPort() << "\n";
+		//cout << ":" << sock.getLocalPort() << endl;
 
 	}
 	catch (SocketException &e) {
-	cerr << "\n" << e.what() << "\n";
+	cerr << endl << e.what() << endl;
 	return false;
 	}
 	sock.disconnect();
 	return true;
 }
 
-vector<string> updateip (int fd) {
-	//cout << "\nUpdating ip\n";
-	char buffer[SBUFSIZE];
+vector<string> updateip (string data) {
 	vector<string> v;
-	int i = read(fd,&buffer,SBUFSIZE);
-	string data(buffer,i);
 	istringstream ss(data);
 	string x;
 	while(ss >> x) {
@@ -71,11 +63,8 @@ vector<string> updateip (int fd) {
 	*/
 	return v;
 }
-vector<unsigned short> updateport (int fd) {
+vector<unsigned short> updateport (string data) {
 	//cout << "\nUpdating port\n";
-	char buffer[SBUFSIZE];
-	int i = read(fd,&buffer,SBUFSIZE);
-	string data(buffer,i);
 	istringstream ss(data);
 	vector<unsigned short> v;
 	string x;
@@ -100,7 +89,6 @@ int main () {
 	//unsigned short us_port = DEFAULTPORT;
 	string id = ident();
 	int gpsdata;
-	cout << "data: ("<< gps <<") (" << modem << ")" << endl;
 
 	do {
 		gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
@@ -123,8 +111,8 @@ int main () {
 	time_t ucurtime;
 	time(&ucurtime);
 	double useconds;
-	vector<string> localip;
-	vector<unsigned short> localport;
+	vector<string> localip = updateip(LOCALIP);
+	vector<unsigned short> localport = updateport(LOCALPORT);
 	vector<string> serverip;
 	vector<unsigned short> serverport;
 	bool first = true;
@@ -144,25 +132,12 @@ int main () {
 		if (useconds >= SUPDATE || first) {
 			cout << "\nUpdating Bcast conf\n";
 			time(&ustarttime);
-			int sip = open(SIP,O_RDONLY);
-			int sport = open(SPORT,O_RDONLY);
-			int lip = open(LIP,O_RDONLY);
-			int lport = open(LPORT,O_RDONLY);
-			if (sip == -1 || sport == -1 || lip == -1 || lport == -1) {
-				cerr << "\nFailed to open conf files. Retrying...\n";
-				cerr << "lip: " << lip << " lport: " << " sip: " << sip << " sport: " << sport << endl;
-				break;
+			if(info()) {
+				serverip = updateip(sip);
+				serverport = updateport(sport);
+				cout << "\nBcast conf updated successfully\n" << endl;
+				first = false;
 			}
-			localip = updateip(lip);
-			localport = updateport(lport);
-			serverip = updateip(sip);
-			serverport = updateport(sport);
-			close(lip);
-			close(lport);
-			close(sip);
-			close(sport);
-			first = false;
-			cout << "\nBcast conf updated successfully\n" << endl;
 		}
 		string alldata(buf, rl);
 		//cout << "all data from buf\n";
