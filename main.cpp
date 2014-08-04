@@ -1,12 +1,7 @@
+#define _VARS_
 #include "ident.h"
-using namespace std;
-string id;
+
 UDPSocket sock;
-string gps;
-string modem;
-string serport;
-string sip;
-string sport;
 //send data plus identifying info to host at host port
 bool bcast (string line,string id,string &hostip, unsigned short destport) {
 	try {
@@ -59,6 +54,7 @@ vector<unsigned short> updateport (string data) {
 	return v;
 }
 int main () {
+	if (!conf()) exit(1);
 	device();
 	id = ident();
 	//string s_ip = DEFAULTIP;
@@ -86,8 +82,8 @@ int main () {
 	time_t ucurtime;
 	time(&ucurtime);
 	double useconds;
-	vector<string> localip = updateip(LOCALIP);
-	vector<unsigned short> localport = updateport(LOCALPORT);
+	vector<string> localip = updateip(localips);
+	vector<unsigned short> localport = updateport(localports);
 	vector<string> serverip;
 	vector<unsigned short> serverport;
 	bool first = true;
@@ -112,6 +108,10 @@ int main () {
 				serverport = updateport(sport);
 				cout << "\nBcast conf updated successfully\n" << endl;
 				first = false;
+			}
+			else {
+			cerr << "\nBcast conf update failed\n";
+			++fail;
 			}
 		}
 		string alldata(buf, rl);

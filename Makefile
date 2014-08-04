@@ -1,4 +1,4 @@
-FILES = main.cpp PracticalSocket.cpp ident.cpp info.cpp
+FILES = main.cpp PracticalSocket.cpp ident.cpp info.cpp dev.cpp conf.cpp
 CPP = g++
 FLAGS = -Wall -O3 -lcurl
 BINLOC = /usr/local/bin/
@@ -13,6 +13,7 @@ clean:
 install: all
 	cp bcast $(BINLOC)
 	cp devdetect.sh $(BINLOC)broadcast
+	cp broadcast.conf /opt
 
 uninstall: clean
 	rm -f $(BINLOC)bcast 

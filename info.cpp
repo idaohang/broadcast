@@ -13,6 +13,7 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, string *userdata) {
 		return 0;
 	}
 }
+
 string getdata(const char* addr) {
 	curl_global_init(CURL_GLOBAL_NOTHING);
 	//cout << "init curl\n";
@@ -33,6 +34,7 @@ string getdata(const char* addr) {
 	return data;
 
 }
+
 string finder (string tag, string data) {
 	signed int startpoint = data.find("<" + tag + ">");
 	signed int endpoint = data.find("</" + tag + ">");
@@ -45,10 +47,11 @@ string finder (string tag, string data) {
 	}
 	return result;
 }
+
 bool info () {
 	string loc = "/tr.aspx?M=" + id;
-	string saddra = "droid.taxitron.net"+loc;
-	string saddrb = "droid.taxitron.com"+loc;
+	string saddra = addressa+loc;
+	string saddrb = addressb+loc;
 	const char* addra = saddra.c_str();
 	const char* addrb = saddrb.c_str();
 		string data;
