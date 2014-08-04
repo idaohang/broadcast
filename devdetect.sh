@@ -35,6 +35,5 @@ done
 
 if [ -e /opt/usb ]; then
 	echo "all is well"
-	/usr/local/bin/bcast &
 fi
 exit 0;

@@ -1,6 +1,7 @@
 #include "ident.h"
 
 void device () {
+	system("/usr/local/bin/broadcast");
 	char devname[30];
 	char inumber[4];
 	char driver[30];

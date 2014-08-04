@@ -54,19 +54,24 @@ vector<unsigned short> updateport (string data) {
 	return v;
 }
 int main () {
+	sleep(40);
+	int fail = 0;
 	if (!conf()) exit(1);
 	device();
-	id = ident();
+	if (gps != "" && modem != "") id = ident();
+	else ++fail;
 	//string s_ip = DEFAULTIP;
 	//unsigned short us_port = DEFAULTPORT;
 	int gpsdata;
-
-	do {
-		gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
-		if (gpsdata == -1) {
-			perror("GPS OPEN");
-		}
-	} while(gpsdata == -1);
+	if (gps != "" && modem != "") {
+		do {
+			gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+			if (gpsdata == -1) {
+				perror("GPS OPEN");
+			}
+		} while(gpsdata == -1);
+	}
+	else ++fail;
 	//cout << "GPSDATA: " << gpsdata << endl;
 	fcntl(gpsdata,F_SETFL,0);
 	if (id == ERRORSTRING) {
@@ -87,7 +92,6 @@ int main () {
 	vector<string> serverip;
 	vector<unsigned short> serverport;
 	bool first = true;
-	int fail = 0;
 	int lnumip;
 	int snumip;
 	int rl = 0;
@@ -160,9 +164,9 @@ int main () {
 		}
 		if (fail == 5 || fail == 1) {
 			++fail;
-			system("ifdown eth1");
+			system("ifdown eth2");
 			sleep(1);
-			system("ifup eth1");
+			system("ifup eth2");
 			sleep(1);
 		}
 		if (fail >= FAIL) {

@@ -1,6 +1,5 @@
 #include "ident.h"
 string ident () {
-	sleep(20);
 	int modemfile;
 	do {
 		modemfile = open(modem.c_str(), O_RDWR | O_NOCTTY | O_NDELAY | O_NONBLOCK);
