@@ -56,7 +56,7 @@ void checkinternet() {
 		if (ping > 0) {
 			cerr << "\nNetwork misconfigured. Trying to recover...\n";
 			system("ifdown eth2");
-			sleep(1);
+			sleep(2);
 			system("ifup eth2");
 			sleep(1);
 		}
