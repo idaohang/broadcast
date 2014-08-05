@@ -1,18 +1,18 @@
 #define _VARS_
 #include "bcast.h"
 
-UDPSocket sock;
-
 int main () {
-	//sleep(40);
+	//sleep(10);
+	cout << "\nBcast init\n";
+	checkinternet();
 	int fail = 0;
-	if (!conf()) exit(1);
+	conf();
 	device();
 	if (gps != "" && modem != "") id = ident();
 	else ++fail;
 	//string s_ip = DEFAULTIP;
 	//unsigned short us_port = DEFAULTPORT;
-	int gpsdata;
+	int gpsdata = -1;
 	if (gps != "" && modem != "") {
 		do {
 			gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
@@ -46,10 +46,12 @@ int main () {
 	int snumip;
 	int rl = 0;
 	char buf[BUFSIZE];
+	checkinternet();
 	rl = read(gpsdata,buf,BUFSIZE);
 	lnumip = 0;
 	snumip = 0;
-	while(rl > 0) {
+	int readfail = 0;
+	while(readfail < 3) {
 		//cout << "Bcast loop\n";
 		time(&ucurtime);
 		useconds = difftime(ucurtime,ustarttime);
@@ -96,6 +98,7 @@ int main () {
 				snumip = 0;
 			}
 			if (seconds >= SERV_TIME) {
+				checkinternet();
 				//cout << "\nSERVER\n";
 				time(&starttime);
 				if(serverip[snumip] != BLANKIP) {
@@ -127,9 +130,13 @@ int main () {
 		}
 		msleep(10);
 		rl = read(gpsdata,buf,BUFSIZE);
+		if (rl < 1) {
+			perror("GPS READ");
+			++readfail;
+		}
 		//cout << "\n";
 	}
 	cerr << "\nModem has stopped transmitting data\n";
-	close(gpsdata);
+	if(gpsdata > 0) close(gpsdata);
 	return 0;
 }

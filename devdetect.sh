@@ -22,12 +22,12 @@ do
 		DR=$($ECHO $udev | $SED "s/ /\n/g" | $GREP -m 1 "DRIVERS" | $AWK -F'"' '{print $2}')
 		for DRIVER in ${DRIVERS[*]}
 		do
-			if [ $DR = $DRIVER ]; then
-				echo "BANNER:banner:\r\nser2net\r\n\r\n" > /etc/ser2net.conf
-				echo "2000:telnet:600:/dev/ttyUSB"$i":9600 8DATABITS NONE 1STOPBIT banner" >> /etc/ser2net.conf
-				$SERVICE ser2net restart
-				continue
-			fi
+			#if [ $DR = $DRIVER ]; then
+				#echo "BANNER:banner:\r\nser2net\r\n\r\n" > /etc/ser2net.conf
+				#echo "2000:telnet:600:/dev/ttyUSB"$i":9600 8DATABITS NONE 1STOPBIT banner" >> /etc/ser2net.conf
+				#$SERVICE ser2net restart
+				#continue
+			#fi
 		done
 
 

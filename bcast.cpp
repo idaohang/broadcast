@@ -49,3 +49,20 @@ vector<unsigned short> updateport (string data) {
 	*/
 	return v;
 }
+void checkinternet() {
+	bool notworking = true;
+	while(notworking) {
+		int ping = system("ping -c 1 -s 1 24.248.166.1 > /dev/null");
+		if (ping > 0) {
+			cerr << "\nNetwork misconfigured. Trying to recover...\n";
+			system("ifdown eth2");
+			sleep(1);
+			system("ifup eth2");
+			sleep(1);
+		}
+		else {
+			notworking = false;
+			//cout << "\nNetwork is operational\n";
+		}
+	}
+}

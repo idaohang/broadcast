@@ -1,4 +1,4 @@
-#include "ident.h"
+#include "bcast.h"
 bool conf() {
 	ifstream conffile(CONFFILE);
 	if (conffile.is_open()) {

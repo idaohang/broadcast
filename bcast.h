@@ -54,11 +54,11 @@ void device();
 //conf.cpp
 bool conf();
 
-//main.cpp
+//bcast.cpp
 bool bcast (string line,string id,string &hostip, unsigned short destport);
 vector<string> updateip (string data);
 vector<unsigned short> updateport (string data);
-
+void checkinternet();
 
 #ifdef _VARS_
 
@@ -81,4 +81,5 @@ _EXTERN_ string addressa;
 _EXTERN_ string addressb;
 _EXTERN_ string localips;
 _EXTERN_ string localports;
+_EXTERN_ UDPSocket sock;
 #endif
