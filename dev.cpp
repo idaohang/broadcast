@@ -1,4 +1,4 @@
-#include "ident.h"
+#include "bcast.h"
 
 void device () {
 	system("/usr/local/bin/broadcast");

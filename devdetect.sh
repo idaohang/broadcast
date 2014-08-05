@@ -6,6 +6,8 @@ UDEVADM=/sbin/udevadm
 SED=/bin/sed
 RM=/bin/rm
 SERVICE=/usr/sbin/service
+#IFUP=/sbin/ifup
+#IFDOWN=/sbin/ifdown
 DRIVERS=(pl2303)
 
 if [ -e  /opt/usb ]; then

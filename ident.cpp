@@ -1,4 +1,4 @@
-#include "ident.h"
+#include "bcast.h"
 string ident () {
 	int modemfile;
 	do {

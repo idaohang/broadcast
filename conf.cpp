@@ -13,6 +13,8 @@ bool conf() {
 		localips = v[2] + " " + v[3] + " " + v[4];
 		localports = v[5] + " " + v[6] + " " + v[7];
 		cout << "\nSuccessfully updated local conf\n";
+		cout << "IPs: " << localips << endl;
+		cout << "Ports: " << localports << endl;
 		return true;
 	}
 	else {
