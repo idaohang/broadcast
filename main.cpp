@@ -4,9 +4,9 @@
 int main () {
 	//sleep(10);
 	cout << "\nBcast init\n";
+	conf();
 	checkinternet();
 	int fail = 0;
-	conf();
 	device();
 	if (gps != "" && modem != "") id = ident();
 	else ++fail;
@@ -15,7 +15,7 @@ int main () {
 	int gpsdata = -1;
 	if (gps != "" && modem != "") {
 		do {
-			gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY | O_NONBLOCK);
+			gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY);
 			if (gpsdata == -1) {
 				perror("GPS OPEN");
 			}
@@ -51,7 +51,7 @@ int main () {
 	lnumip = 0;
 	snumip = 0;
 	int readfail = 0;
-	while(readfail < 3) {
+	while(readfail < 10) {
 		//cout << "Bcast loop\n";
 		time(&ucurtime);
 		useconds = difftime(ucurtime,ustarttime);
@@ -134,9 +134,19 @@ int main () {
 			perror("GPS READ");
 			++readfail;
 		}
+		else readfail = 0;
+		if (readfail > 0) {
+			close(gpsdata);
+			gpsdata = open(gps.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY);
+			if (gpsdata == -1) {
+				perror("Open GPS Again");
+				system("reboot");
+			}
+		}
 		//cout << "\n";
 	}
-	cerr << "\nModem has stopped transmitting data\n";
+	cerr << "\nModem has been unplugged or butchered by software. Rebooting\n";
 	if(gpsdata > 0) close(gpsdata);
+	system("reboot");
 	return 0;
 }

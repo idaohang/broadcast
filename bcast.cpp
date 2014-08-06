@@ -51,13 +51,16 @@ vector<unsigned short> updateport (string data) {
 }
 void checkinternet() {
 	bool notworking = true;
+	char s[81];
+	sprintf(s, "ping -c 1 -s 1 %s > /dev/null", pingip.c_str());
 	while(notworking) {
-		int ping = system("ping -c 1 -s 1 24.248.166.1 > /dev/null");
+		int ping = system(s);
 		if (ping > 0) {
 			cerr << "\nNetwork misconfigured. Trying to recover...\n";
-			system("ifdown eth2");
-			sleep(2);
-			system("ifup eth2");
+			if(system("timeout 10 ifdown eth2") >= 0) {
+				sleep(2);
+			}
+			system("timeout 10 ifup eth2");
 			sleep(1);
 		}
 		else {

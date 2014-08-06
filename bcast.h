@@ -18,6 +18,7 @@
 #include "PracticalSocket.h"
 #include <curl/curl.h>
 #include <fstream>
+#include <thread>
 
 #define DEFAULTPORT 4451
 #define FAIL 10 // Maximum # of failiures allowed
@@ -60,6 +61,12 @@ vector<string> updateip (string data);
 vector<unsigned short> updateport (string data);
 void checkinternet();
 
+//car.cpp
+bool carinit();
+string carinfo();
+void carread();
+//char *incom, int length, char **buf);
+
 #ifdef _VARS_
 
 #define _EXTERN_
@@ -81,5 +88,6 @@ _EXTERN_ string addressa;
 _EXTERN_ string addressb;
 _EXTERN_ string localips;
 _EXTERN_ string localports;
-_EXTERN_ UDPSocket sock;
+//_EXTERN_ UDPSocket sock;
+_EXTERN_ string pingip;
 #endif
