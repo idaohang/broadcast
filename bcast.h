@@ -18,7 +18,7 @@
 #include "PracticalSocket.h"
 #include <curl/curl.h>
 #include <fstream>
-#include <thread>
+//#include <thread>
 
 #define DEFAULTPORT 4451
 #define FAIL 10 // Maximum # of failiures allowed
