@@ -88,6 +88,6 @@ _EXTERN_ string addressa;
 _EXTERN_ string addressb;
 _EXTERN_ string localips;
 _EXTERN_ string localports;
-//_EXTERN_ UDPSocket sock;
+_EXTERN_ UDPSocket sock;
 _EXTERN_ string pingip;
 #endif
