@@ -1,0 +1,566 @@
+<html>
+<head>
+<style>
+.hll { background-color: #ffffcc }
+.c { color: #888888 } /* Comment */
+.err { color: #FF0000; background-color: #FFAAAA } /* Error */
+.k { color: #008800; font-weight: bold } /* Keyword */
+.o { color: #333333 } /* Operator */
+.cm { color: #888888 } /* Comment.Multiline */
+.cp { color: #557799 } /* Comment.Preproc */
+.c1 { color: #888888 } /* Comment.Single */
+.cs { color: #cc0000; font-weight: bold } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.gr { color: #FF0000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #00A000 } /* Generic.Inserted */
+.go { color: #888888 } /* Generic.Output */
+.gp { color: #c65d09; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #0044DD } /* Generic.Traceback */
+.kc { color: #008800; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008800; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008800; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #003388; font-weight: bold } /* Keyword.Pseudo */
+.kr { color: #008800; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #333399; font-weight: bold } /* Keyword.Type */
+.m { color: #6600EE; font-weight: bold } /* Literal.Number */
+.s { background-color: #fff0f0 } /* Literal.String */
+.na { color: #0000CC } /* Name.Attribute */
+.nb { color: #007020 } /* Name.Builtin */
+.nc { color: #BB0066; font-weight: bold } /* Name.Class */
+.no { color: #003366; font-weight: bold } /* Name.Constant */
+.nd { color: #555555; font-weight: bold } /* Name.Decorator */
+.ni { color: #880000; font-weight: bold } /* Name.Entity */
+.ne { color: #FF0000; font-weight: bold } /* Name.Exception */
+.nf { color: #0066BB; font-weight: bold } /* Name.Function */
+.nl { color: #997700; font-weight: bold } /* Name.Label */
+.nn { color: #0e84b5; font-weight: bold } /* Name.Namespace */
+.nt { color: #007700 } /* Name.Tag */
+.nv { color: #996633 } /* Name.Variable */
+.ow { color: #000000; font-weight: bold } /* Operator.Word */
+.w { color: #bbbbbb } /* Text.Whitespace */
+.mf { color: #6600EE; font-weight: bold } /* Literal.Number.Float */
+.mh { color: #005588; font-weight: bold } /* Literal.Number.Hex */
+.mi { color: #0000DD; font-weight: bold } /* Literal.Number.Integer */
+.mo { color: #4400EE; font-weight: bold } /* Literal.Number.Oct */
+.sb { background-color: #fff0f0 } /* Literal.String.Backtick */
+.sc { color: #0044DD } /* Literal.String.Char */
+.sd { color: #DD4422 } /* Literal.String.Doc */
+.s2 { background-color: #fff0f0 } /* Literal.String.Double */
+.se { color: #666666; font-weight: bold; background-color: #fff0f0 } /* Literal.String.Escape */
+.sh { background-color: #fff0f0 } /* Literal.String.Heredoc */
+.si { background-color: #eeeeee } /* Literal.String.Interpol */
+.sx { color: #DD2200; background-color: #fff0f0 } /* Literal.String.Other */
+.sr { color: #000000; background-color: #fff0ff } /* Literal.String.Regex */
+.s1 { background-color: #fff0f0 } /* Literal.String.Single */
+.ss { color: #AA6600 } /* Literal.String.Symbol */
+.bp { color: #007020 } /* Name.Builtin.Pseudo */
+.vc { color: #336699 } /* Name.Variable.Class */
+.vg { color: #dd7700; font-weight: bold } /* Name.Variable.Global */
+.vi { color: #3333BB } /* Name.Variable.Instance */
+.il { color: #0000DD; font-weight: bold } /* Literal.Number.Integer.Long */
+</style>
+</head>
+<body>
+<div class="highlight"><pre><span class="cm">/*</span>
+<span class="cm">v2.0</span>
+<span class="cm">First Version with Single Binary</span>
+<span class="cm">Only Changed Files Shown</span>
+<span class="cm">*/</span>
+
+<span class="cm">/* Makefile */</span>
+<div class="highlight"><pre><span class="nv">FILES</span> <span class="o">=</span> main.cpp PracticalSocket.cpp ident.cpp info.cpp
+<span class="nv">CPP</span> <span class="o">=</span> g++
+<span class="nv">FLAGS</span> <span class="o">=</span> -Wall -O3 -lcurl
+<span class="nv">BINLOC</span> <span class="o">=</span> /usr/local/bin/
+
+<span class="nf">all</span><span class="o">:</span> <span class="m">clean bcast</span>
+
+<span class="nf">bcast</span><span class="o">:</span> <span class="m">$(FILES)</span>
+	<span class="k">$(</span>CPP<span class="k">)</span> <span class="k">$(</span>FLAGS<span class="k">)</span> <span class="k">$(</span>FILES<span class="k">)</span> -o bcast
+<span class="nf">clean</span><span class="o">:</span>
+	rm -rf *.o *~ bcast
+
+<span class="nf">install</span><span class="o">:</span> <span class="m">all</span>
+	cp bcast <span class="k">$(</span>BINLOC<span class="k">)</span>
+	cp devdetect.sh <span class="k">$(</span>BINLOC<span class="k">)</span>broadcast
+
+<span class="nf">uninstall</span><span class="o">:</span> <span class="m">clean</span>
+	rm -f <span class="k">$(</span>BINLOC<span class="k">)</span>bcast 
+</pre></div>
+<span class="cm">/* devdetect.sh */</span>
+<div class="highlight"><pre><span class="c">#!/bin/bash</span>
+<span class="nv">AWK</span><span class="o">=</span>/usr/bin/awk
+<span class="nv">ECHO</span><span class="o">=</span>/bin/echo
+<span class="nv">GREP</span><span class="o">=</span>/bin/grep
+<span class="nv">UDEVADM</span><span class="o">=</span>/sbin/udevadm
+<span class="nv">SED</span><span class="o">=</span>/bin/sed
+<span class="nv">RM</span><span class="o">=</span>/bin/rm
+
+<span class="k">if</span> <span class="o">[</span> -e  /opt/usb <span class="o">]</span>; <span class="k">then</span>
+	<span class="nv">$RM</span> /opt/usb
+<span class="k">fi</span>
+
+<span class="k">for </span>i in 0 1 2 3
+<span class="k">do</span>
+<span class="k">	if</span> <span class="o">[</span> -e /dev/ttyUSB<span class="nv">$i</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">		</span><span class="nv">udev</span><span class="o">=</span><span class="k">$(</span><span class="nv">$UDEVADM</span> info -a -n /dev/ttyUSB<span class="nv">$i</span><span class="k">)</span>
+		<span class="nv">IN</span><span class="o">=</span><span class="k">$(</span><span class="nv">$ECHO</span> <span class="nv">$udev</span> | <span class="nv">$SED</span> <span class="s2">&quot;s/ /\n/g&quot;</span> | <span class="nv">$GREP</span> -m 1 <span class="s2">&quot;InterfaceNumber&quot;</span> | <span class="nv">$AWK</span> -F<span class="s1">&#39;&quot;&#39;</span> <span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span> 
+		<span class="nv">DR</span><span class="o">=</span><span class="k">$(</span><span class="nv">$ECHO</span> <span class="nv">$udev</span> | <span class="nv">$SED</span> <span class="s2">&quot;s/ /\n/g&quot;</span> | <span class="nv">$GREP</span> -m 1 <span class="s2">&quot;DRIVERS&quot;</span> | <span class="nv">$AWK</span> -F<span class="s1">&#39;&quot;&#39;</span> <span class="s1">&#39;{print $2}&#39;</span><span class="k">)</span> 
+
+		<span class="nv">$ECHO</span> <span class="s2">&quot;/dev/ttyUSB&quot;</span><span class="nv">$i</span><span class="s2">&quot; &quot;</span><span class="nv">$IN</span><span class="s2">&quot; &quot;</span><span class="nv">$DR</span> &gt;&gt; /opt/usb
+	<span class="k">fi</span>
+<span class="k">done</span>
+<span class="k">if</span> <span class="o">[</span> -e /opt/usb <span class="o">]</span>; <span class="k">then</span>
+<span class="k">	</span><span class="nb">echo</span> <span class="s2">&quot;all is well&quot;</span>
+	/usr/local/bin/info &amp;
+	/usr/local/bin/bcast &amp;
+<span class="k">fi</span>
+</pre></div>
+<span class="cm">/* ident.h */</span>
+<span class="cp">#ifndef _IDENT_H</span>
+<span class="cp">#define _IDENT_H</span>
+<span class="cp">#include &lt;algorithm&gt;</span>
+<span class="cp">#include &lt;iterator&gt;</span>
+<span class="cp">#include &lt;string&gt;</span>
+<span class="cp">#include &lt;unistd.h&gt;</span>
+<span class="cp">#include &lt;iostream&gt;</span>
+<span class="cp">#include &lt;string&gt;</span>
+<span class="cp">#include &lt;cstring&gt;</span>
+<span class="cp">#include &lt;cstdio&gt;</span>
+<span class="cp">#include &lt;cerrno&gt;</span>
+<span class="cp">#include &lt;fcntl.h&gt;</span>
+<span class="cp">#include &lt;sstream&gt;</span>
+<span class="cp">#include &lt;vector&gt;</span>
+<span class="cp">#include &lt;cstdlib&gt;</span>
+<span class="cp">#include &lt;termios.h&gt;</span>
+<span class="cp">#include &lt;ctime&gt;</span>
+<span class="cp">#include &quot;PracticalSocket.h&quot;</span>
+<span class="cp">#include &lt;curl/curl.h&gt;</span>
+<span class="cp">#include &lt;fstream&gt;</span>
+
+<span class="cp">#define DEFAULTPORT 4451</span>
+<span class="cp">#define FAIL 10 </span><span class="c1">// Maximum # of failiures allowed</span>
+<span class="cp">#define BLANKIP &quot;0.0.0.0&quot;</span>
+<span class="cp">#define BUFSIZE 10000 </span><span class="c1">// for modem and gps</span>
+<span class="cp">#define SBUFSIZE 50 </span><span class="c1">// for conf updates</span>
+<span class="cp">#define ERRORSTRING &quot;ERROR&quot;</span>
+<span class="cp">#define SERV_TIME 15</span>
+<span class="cp">#define SUPDATE 3600 </span><span class="c1">//5 minutes 30 seconds</span>
+<span class="cp">#define WAITTIME 3600</span>
+<span class="cp">#define BLANK &quot;000&quot;</span>
+<span class="cp">#define ERRORSTRING &quot;ERROR&quot;</span>
+<span class="cp">#define IDBUFSIZE 10000</span>
+
+<span class="cp">#define USBDATA &quot;/opt/usb&quot;</span>
+<span class="cp">#define LOCALIP &quot;0.0.0.0 0.0.0.0 0.0.0.0&quot;</span>
+<span class="cp">#define LOCALPORT &quot;04551 04551 04551&quot;</span>
+
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="n">string</span> <span class="nf">ident</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">msleep</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">seconds</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">device</span><span class="p">();</span>
+<span class="kt">bool</span> <span class="nf">info</span><span class="p">();</span>
+<span class="k">extern</span> <span class="n">string</span> <span class="n">modem</span><span class="p">;</span>
+<span class="k">extern</span> <span class="n">string</span> <span class="n">gps</span><span class="p">;</span>
+<span class="k">extern</span> <span class="n">string</span> <span class="n">serport</span><span class="p">;</span>
+<span class="k">extern</span> <span class="n">string</span> <span class="n">sip</span><span class="p">;</span>
+<span class="k">extern</span> <span class="n">string</span> <span class="n">sport</span><span class="p">;</span>
+<span class="k">extern</span> <span class="n">string</span> <span class="n">id</span><span class="p">;</span>
+<span class="cp">#endif</span>
+
+<span class="cm">/* ident.cpp */</span>
+<span class="cp">#include &quot;ident.h&quot;</span>
+<span class="kt">void</span> <span class="nf">device</span> <span class="p">()</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="n">usb</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">USBDATA</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">usb</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">perror</span><span class="p">(</span><span class="s">&quot;usb open&quot;</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">IDBUFSIZE</span><span class="p">];</span>
+	<span class="kt">int</span> <span class="n">rb</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">usb</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">IDBUFSIZE</span><span class="p">);</span>
+	<span class="n">close</span><span class="p">(</span><span class="n">usb</span><span class="p">);</span>
+	<span class="n">string</span> <span class="n">data</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="n">rb</span><span class="p">);</span>
+	<span class="n">istringstream</span> <span class="n">ss</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+	<span class="n">string</span> <span class="n">line</span><span class="p">;</span>
+	<span class="k">while</span> <span class="p">(</span><span class="n">getline</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span> <span class="p">{</span>
+		<span class="c1">//cout &lt;&lt; &quot;getline: &quot; &lt;&lt; line &lt;&lt; endl;</span>
+		<span class="n">istringstream</span> <span class="n">is</span><span class="p">(</span><span class="n">line</span><span class="p">);</span>
+		<span class="n">string</span> <span class="n">x</span><span class="p">;</span>
+		<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
+		<span class="k">while</span><span class="p">(</span><span class="n">is</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+			<span class="c1">//cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;</span>
+			<span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+		<span class="p">}</span>
+
+		<span class="cm">/*</span>
+<span class="cm">		id0 num0 dr0</span>
+<span class="cm">		id1 num1 dr1</span>
+<span class="cm">		id2 num2 dr2</span>
+<span class="cm">		id3 num3 dr3</span>
+<span class="cm">		*/</span>
+		<span class="c1">//cout &lt;&lt; &quot;Output &quot; &lt;&lt; v[0] &lt;&lt; &quot; &quot; &lt;&lt; v[1] &lt;&lt; &quot; &quot; &lt;&lt; v[2] &lt;&lt; endl;</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;GobiSerial&quot;</span><span class="p">)</span> <span class="p">{</span> 
+			<span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;02&quot;</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">gps</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+			<span class="p">}</span>
+			<span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;03&quot;</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">modem</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">else</span> <span class="p">{</span>
+			<span class="n">serport</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">gps</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">modem</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+		<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Gobi identification failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;GPS: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">gps</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;modem: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">modem</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">string</span> <span class="nf">ident</span> <span class="p">()</span> <span class="p">{</span>
+	<span class="n">sleep</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">modemfile</span><span class="p">;</span>
+	<span class="k">do</span> <span class="p">{</span>
+		<span class="n">modemfile</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">modem</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">O_RDWR</span> <span class="o">|</span> <span class="n">O_NOCTTY</span> <span class="o">|</span> <span class="n">O_NDELAY</span> <span class="o">|</span> <span class="n">O_NONBLOCK</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">modemfile</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Modem not open</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+			<span class="n">perror</span><span class="p">(</span><span class="s">&quot;MODEM OPEN&quot;</span><span class="p">);</span>
+			<span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="n">modemfile</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">modem open</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+	<span class="n">fcntl</span><span class="p">(</span><span class="n">modemfile</span><span class="p">,</span> <span class="n">F_SETFL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+	<span class="kt">char</span> <span class="n">inf</span> <span class="p">[</span> <span class="p">]</span> <span class="o">=</span> <span class="s">&quot;ATI1</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">;</span>
+	<span class="kt">ssize_t</span> <span class="n">wb</span> <span class="o">=</span> <span class="n">write</span><span class="p">(</span><span class="n">modemfile</span><span class="p">,</span><span class="n">inf</span><span class="p">,</span><span class="mi">6</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">wb</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Error writing modemfile</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">IDBUFSIZE</span><span class="p">];</span>
+	<span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	<span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">ii</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">modemfile</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">IDBUFSIZE</span><span class="p">);</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">ii</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> 
+		<span class="n">string</span> <span class="n">raw</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">ii</span><span class="p">);</span>
+		<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">found</span> <span class="o">=</span> <span class="n">raw</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;MEID:&quot;</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">found</span> <span class="o">!=</span> <span class="n">string</span><span class="o">::</span><span class="n">npos</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">string</span> <span class="n">data</span> <span class="o">=</span> <span class="n">raw</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">found</span><span class="o">+</span><span class="mi">6</span><span class="p">,</span> <span class="n">string</span><span class="o">::</span><span class="n">npos</span><span class="p">);</span>
+			<span class="c1">//cout &lt;&lt; &quot;Raw: &quot; &lt;&lt; raw &lt;&lt; endl;</span>
+			<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">ID:&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">data</span><span class="p">;</span>
+			<span class="n">close</span><span class="p">(</span><span class="n">modemfile</span><span class="p">);</span>
+			<span class="k">return</span> <span class="n">data</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">data</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="n">i</span><span class="o">++</span><span class="p">;</span>
+		<span class="n">ii</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">modemfile</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">IDBUFSIZE</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">ERRORSTRING</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">msleep</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">seconds</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">usleep</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">);</span> <span class="c1">//takes microseconds</span>
+<span class="p">}</span>
+
+<span class="cm">/* info.cpp */</span>
+<span class="cp">#include &quot;ident.h&quot;</span>
+
+<span class="kt">size_t</span> <span class="nf">write_callback</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">ptr</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">nmemb</span><span class="p">,</span> <span class="n">string</span> <span class="o">*</span><span class="n">userdata</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">//cout &lt;&lt; &quot;New Data: &quot; &lt;&lt; ptr &lt;&lt; endl;</span>
+	<span class="n">string</span> <span class="n">newstr</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>
+	<span class="c1">//cout &lt;&lt; &quot;New string: &quot; &lt;&lt; newstr &lt;&lt; endl;</span>
+	<span class="o">*</span><span class="n">userdata</span> <span class="o">=</span> <span class="n">newstr</span><span class="p">;</span>
+	<span class="c1">//cout &lt;&lt; &quot;All data: &quot; &lt;&lt; *userdata &lt;&lt; endl;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">newstr</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">size</span><span class="o">*</span><span class="n">nmemb</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="k">else</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+<span class="n">string</span> <span class="nf">getdata</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">addr</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">curl_global_init</span><span class="p">(</span><span class="n">CURL_GLOBAL_NOTHING</span><span class="p">);</span>
+	<span class="c1">//cout &lt;&lt; &quot;init curl\n&quot;;</span>
+	<span class="n">CURL</span> <span class="o">*</span><span class="n">handle</span> <span class="o">=</span> <span class="n">curl_easy_init</span><span class="p">();</span>
+	<span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="n">CURLOPT_URL</span><span class="p">,</span><span class="n">addr</span><span class="p">);</span>
+	<span class="n">string</span> <span class="n">data</span><span class="p">;</span>
+	<span class="n">string</span><span class="o">*</span> <span class="n">buf</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">;</span>
+	<span class="c1">//cout &lt;&lt; &quot;Made buf\n&quot;;</span>
+	<span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="n">CURLOPT_WRITEFUNCTION</span><span class="p">,</span><span class="n">write_callback</span><span class="p">);</span>
+	<span class="n">curl_easy_setopt</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="n">CURLOPT_WRITEDATA</span><span class="p">,</span><span class="n">buf</span><span class="p">);</span>
+	<span class="n">curl_easy_perform</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+	<span class="c1">//cout &lt;&lt; &quot;curl_easy_perform\n&quot;;</span>
+	<span class="n">curl_easy_cleanup</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+	<span class="n">curl_global_cleanup</span><span class="p">();</span>
+	<span class="c1">//cout &lt;&lt; &quot;cleanup\n&quot;;</span>
+	<span class="c1">//process data</span>
+	<span class="c1">//cout &lt;&lt; &quot;Data: &quot; &lt;&lt; data &lt;&lt; endl;</span>
+	<span class="k">return</span> <span class="n">data</span><span class="p">;</span>
+
+<span class="p">}</span>
+<span class="n">string</span> <span class="nf">finder</span> <span class="p">(</span><span class="n">string</span> <span class="n">tag</span><span class="p">,</span> <span class="n">string</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+	<span class="kt">signed</span> <span class="kt">int</span> <span class="n">startpoint</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;&lt;&quot;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s">&quot;&gt;&quot;</span><span class="p">);</span>
+	<span class="kt">signed</span> <span class="kt">int</span> <span class="n">endpoint</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;&lt;/&quot;</span> <span class="o">+</span> <span class="n">tag</span> <span class="o">+</span> <span class="s">&quot;&gt;&quot;</span><span class="p">);</span>
+	<span class="n">string</span> <span class="n">result</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">startpoint</span>  <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">||</span> <span class="n">endpoint</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Could not find &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">tag</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">else</span> <span class="p">{</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">startpoint</span><span class="o">+</span><span class="mi">6</span><span class="p">,</span><span class="n">endpoint</span><span class="o">-</span><span class="p">(</span><span class="n">startpoint</span><span class="o">+</span><span class="mi">6</span><span class="p">));</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">bool</span> <span class="nf">info</span> <span class="p">()</span> <span class="p">{</span>
+	<span class="n">string</span> <span class="n">loc</span> <span class="o">=</span> <span class="s">&quot;/tr.aspx?M=&quot;</span> <span class="o">+</span> <span class="n">id</span><span class="p">;</span>
+	<span class="n">string</span> <span class="n">saddra</span> <span class="o">=</span> <span class="s">&quot;droid.taxitron.net&quot;</span><span class="o">+</span><span class="n">loc</span><span class="p">;</span>
+	<span class="n">string</span> <span class="n">saddrb</span> <span class="o">=</span> <span class="s">&quot;droid.taxitron.com&quot;</span><span class="o">+</span><span class="n">loc</span><span class="p">;</span>
+	<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">addra</span> <span class="o">=</span> <span class="n">saddra</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span>
+	<span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">addrb</span> <span class="o">=</span> <span class="n">saddrb</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span>
+		<span class="n">string</span> <span class="n">data</span><span class="p">;</span>
+		<span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">addra</span><span class="p">);</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">addrb</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+			<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">No data available</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">data</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+			<span class="c1">//find TCP 1, 2, and 3</span>
+			<span class="c1">//this needs to be a function...</span>
+			<span class="n">string</span> <span class="n">xml</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;TCP1&quot;</span><span class="p">,</span> <span class="s">&quot;TCP2&quot;</span><span class="p">,</span> <span class="s">&quot;TCP3&quot;</span> <span class="p">};</span>
+			<span class="n">string</span> <span class="n">ips</span><span class="p">;</span>
+			<span class="n">string</span> <span class="n">ports</span><span class="p">;</span>
+			<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">string</span> <span class="n">tcp</span> <span class="o">=</span> <span class="n">finder</span><span class="p">(</span><span class="n">xml</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">data</span><span class="p">);</span>
+				<span class="kt">signed</span> <span class="kt">int</span> <span class="n">tcpcolon</span> <span class="o">=</span> <span class="n">tcp</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;:&quot;</span><span class="p">);</span>
+				<span class="n">ips</span> <span class="o">+=</span> <span class="n">tcp</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">tcpcolon</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="p">;</span>
+				<span class="n">ports</span> <span class="o">+=</span> <span class="n">tcp</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">tcpcolon</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; &quot;</span><span class="p">;</span>
+			<span class="p">}</span>
+
+			<span class="cm">/*</span>
+
+<span class="cm">			string tcp2 = finder(&quot;TCP2&quot;,data);</span>
+<span class="cm">			signed int tcp2colon = tcp2.find(&quot;:&quot;);</span>
+<span class="cm">			string tcp2ip = tcp2.substr(0,tcp2colon);</span>
+<span class="cm">			string tcp2port = tcp2.substr(tcp2colon+1);</span>
+
+<span class="cm">			string tcp3 = finder(&quot;TCP3&quot;,data);</span>
+<span class="cm">			signed int tcp3colon = tcp3.find(&quot;:&quot;);</span>
+<span class="cm">			string tcp3ip = tcp3.substr(0,tcp3colon);</span>
+<span class="cm"> 			string tcp3port = tcp3.substr(tcp3colon+1);</span>
+
+<span class="cm">			string ips = tcp1ip + &quot; &quot; + tcp2ip + &quot; &quot; + tcp3ip;</span>
+<span class="cm">			string ports = tcp1port + &quot; &quot; + tcp2port + &quot; &quot; + tcp3port;</span>
+<span class="cm">			*/</span>
+			<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">IPs: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">ips</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+			<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Ports: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">ports</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">ips</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">&amp;&amp;</span> <span class="n">ports</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;No IP&#39;s found. Am I Authorized?</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+				<span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">else</span>
+			<span class="p">{</span>
+				<span class="n">sip</span> <span class="o">=</span> <span class="n">ips</span><span class="p">;</span>
+				<span class="n">sport</span> <span class="o">=</span> <span class="n">ports</span><span class="p">;</span>
+				<span class="cm">/*</span>
+<span class="cm">				ofstream sip;</span>
+<span class="cm">				sip.open(IPCONF, ofstream::out | ofstream::trunc);</span>
+<span class="cm">				sip.write(ips.c_str(),ips.length());</span>
+<span class="cm">				ofstream sport;</span>
+<span class="cm">			 	sport.open(PORTCONF, ofstream::out | ofstream::trunc);</span>
+<span class="cm">				sport.write(ports.c_str(),ports.length());</span>
+<span class="cm">				*/</span>
+				<span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="c1">//cout &lt;&lt; &quot;\n\n&quot;;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* main.cpp */</span>
+<span class="cp">#include &quot;ident.h&quot;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">id</span><span class="p">;</span>
+<span class="n">UDPSocket</span> <span class="n">sock</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">gps</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">modem</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">serport</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">sip</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">sport</span><span class="p">;</span>
+<span class="c1">//send data plus identifying info to host at host port</span>
+<span class="kt">bool</span> <span class="nf">bcast</span> <span class="p">(</span><span class="n">string</span> <span class="n">line</span><span class="p">,</span><span class="n">string</span> <span class="n">id</span><span class="p">,</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">hostip</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">destport</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">try</span> <span class="p">{</span>
+		<span class="n">string</span> <span class="n">data</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="s">&quot;,&quot;</span> <span class="o">+</span> <span class="n">id</span><span class="p">;</span>
+		<span class="n">sock</span><span class="p">.</span><span class="n">sendTo</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">hostip</span><span class="p">,</span> <span class="n">destport</span><span class="p">);</span>
+		<span class="c1">//cout &lt;&lt; &quot;:&quot; &lt;&lt; sock.getLocalPort() &lt;&lt; endl;</span>
+
+	<span class="p">}</span>
+	<span class="k">catch</span> <span class="p">(</span><span class="n">SocketException</span> <span class="o">&amp;</span><span class="n">e</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="n">e</span><span class="p">.</span><span class="n">what</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+	<span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="n">sock</span><span class="p">.</span><span class="n">disconnect</span><span class="p">();</span>
+	<span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">updateip</span> <span class="p">(</span><span class="n">string</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
+	<span class="n">istringstream</span> <span class="nf">ss</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+	<span class="n">string</span> <span class="n">x</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">ss</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">//cout &lt;&lt; x &lt;&lt; &quot;\n&quot;;</span>
+		<span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="cm">/*</span>
+<span class="cm">	cout &lt;&lt; &quot;v 0 &quot; &lt;&lt; v[0] &lt;&lt; &quot;\n&quot;;</span>
+<span class="cm">	cout &lt;&lt; &quot;v 1 &quot; &lt;&lt; v[1] &lt;&lt; &quot;\n&quot;;</span>
+<span class="cm">	cout &lt;&lt; &quot;v 2 &quot; &lt;&lt; v[2] &lt;&lt; &quot;\n&quot;;</span>
+<span class="cm">	*/</span>
+	<span class="k">return</span> <span class="n">v</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">short</span><span class="o">&gt;</span> <span class="n">updateport</span> <span class="p">(</span><span class="n">string</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">//cout &lt;&lt; &quot;\nUpdating port\n&quot;;</span>
+	<span class="n">istringstream</span> <span class="n">ss</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">short</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
+	<span class="n">string</span> <span class="n">x</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">ss</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">//cout &lt;&lt; x &lt;&lt; endl;</span>
+		<span class="n">stringstream</span> <span class="n">str</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+		<span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">portshort</span><span class="p">;</span>
+		<span class="n">str</span> <span class="o">&gt;&gt;</span> <span class="n">portshort</span><span class="p">;</span>
+		<span class="c1">//cout &lt;&lt; portshort &lt;&lt; &quot;\n&quot;;</span>
+		<span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">portshort</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="cm">/*</span>
+<span class="cm">	for (int i = 0; i &lt; 3; ++i) {</span>
+<span class="cm">		cout &lt;&lt; &quot;V[&quot; &lt;&lt; i &lt;&lt; &quot;]: &quot; &lt;&lt; v[i] &lt;&lt; &quot;\n&quot;;</span>
+<span class="cm">	}</span>
+<span class="cm">	*/</span>
+	<span class="k">return</span> <span class="n">v</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">main</span> <span class="p">()</span> <span class="p">{</span>
+	<span class="n">device</span><span class="p">();</span>
+	<span class="n">id</span> <span class="o">=</span> <span class="n">ident</span><span class="p">();</span>
+	<span class="c1">//string s_ip = DEFAULTIP;</span>
+	<span class="c1">//unsigned short us_port = DEFAULTPORT;</span>
+	<span class="kt">int</span> <span class="n">gpsdata</span><span class="p">;</span>
+
+	<span class="k">do</span> <span class="p">{</span>
+		<span class="n">gpsdata</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="n">gps</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">O_RDONLY</span> <span class="o">|</span> <span class="n">O_NOCTTY</span> <span class="o">|</span> <span class="n">O_NDELAY</span> <span class="o">|</span> <span class="n">O_NONBLOCK</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">gpsdata</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">perror</span><span class="p">(</span><span class="s">&quot;GPS OPEN&quot;</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span> <span class="k">while</span><span class="p">(</span><span class="n">gpsdata</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+	<span class="c1">//cout &lt;&lt; &quot;GPSDATA: &quot; &lt;&lt; gpsdata &lt;&lt; endl;</span>
+	<span class="n">fcntl</span><span class="p">(</span><span class="n">gpsdata</span><span class="p">,</span><span class="n">F_SETFL</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">id</span> <span class="o">==</span> <span class="n">ERRORSTRING</span><span class="p">)</span> <span class="p">{</span>
+		<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">error obtaining id</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="kt">time_t</span> <span class="n">starttime</span><span class="p">;</span>
+	<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">starttime</span><span class="p">);</span>
+	<span class="kt">time_t</span> <span class="n">curtime</span><span class="p">;</span>
+	<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">curtime</span><span class="p">);</span>
+	<span class="kt">double</span> <span class="n">seconds</span><span class="p">;</span>
+	<span class="kt">time_t</span> <span class="n">ustarttime</span><span class="p">;</span>
+	<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ustarttime</span><span class="p">);</span>
+	<span class="kt">time_t</span> <span class="n">ucurtime</span><span class="p">;</span>
+	<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ucurtime</span><span class="p">);</span>
+	<span class="kt">double</span> <span class="n">useconds</span><span class="p">;</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">localip</span> <span class="o">=</span> <span class="n">updateip</span><span class="p">(</span><span class="n">LOCALIP</span><span class="p">);</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">short</span><span class="o">&gt;</span> <span class="n">localport</span> <span class="o">=</span> <span class="n">updateport</span><span class="p">(</span><span class="n">LOCALPORT</span><span class="p">);</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">serverip</span><span class="p">;</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span> <span class="kt">short</span><span class="o">&gt;</span> <span class="n">serverport</span><span class="p">;</span>
+	<span class="kt">bool</span> <span class="n">first</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">fail</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">lnumip</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">snumip</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">rl</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="n">buf</span><span class="p">[</span><span class="n">BUFSIZE</span><span class="p">];</span>
+	<span class="n">rl</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">gpsdata</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">BUFSIZE</span><span class="p">);</span>
+	<span class="n">lnumip</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">snumip</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">rl</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+		<span class="c1">//cout &lt;&lt; &quot;Bcast loop\n&quot;;</span>
+		<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ucurtime</span><span class="p">);</span>
+		<span class="n">useconds</span> <span class="o">=</span> <span class="n">difftime</span><span class="p">(</span><span class="n">ucurtime</span><span class="p">,</span><span class="n">ustarttime</span><span class="p">);</span>
+		<span class="c1">//cout &lt;&lt; &quot;USeconds: &quot; &lt;&lt; useconds &lt;&lt; endl;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">useconds</span> <span class="o">&gt;=</span> <span class="n">SUPDATE</span> <span class="o">||</span> <span class="n">first</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Updating Bcast conf</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+			<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">ustarttime</span><span class="p">);</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">info</span><span class="p">())</span> <span class="p">{</span>
+				<span class="n">serverip</span> <span class="o">=</span> <span class="n">updateip</span><span class="p">(</span><span class="n">sip</span><span class="p">);</span>
+				<span class="n">serverport</span> <span class="o">=</span> <span class="n">updateport</span><span class="p">(</span><span class="n">sport</span><span class="p">);</span>
+				<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Bcast conf updated successfully</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+				<span class="n">first</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="n">string</span> <span class="n">alldata</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">rl</span><span class="p">);</span>
+		<span class="c1">//cout &lt;&lt; &quot;all data from buf\n&quot;;</span>
+		<span class="n">string</span> <span class="n">data</span> <span class="o">=</span> <span class="s">&quot;000&quot;</span><span class="p">;</span>
+		<span class="c1">//cout &lt;&lt; &quot;data init\n&quot;;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">alldata</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+			<span class="c1">//cout &lt;&lt; &quot;fill data&quot;;</span>
+			<span class="n">data</span> <span class="o">=</span> <span class="n">alldata</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">alldata</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="c1">//cout &lt;&lt; &quot;\nGPS DATA: &quot; &lt;&lt; data &lt;&lt; &quot;\n&quot;;</span>
+		<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">found</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="s">&quot;$GPRMC&quot;</span><span class="p">);</span>
+		<span class="c1">//cout &lt;&lt; &quot;find data\n&quot;;</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">found</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+			<span class="c1">//cout &lt;&lt; &quot;\ndata found\n&quot;;</span>
+			<span class="n">lnumip</span><span class="o">++</span><span class="p">;</span>
+			<span class="c1">//cout &lt;&lt; lnumip &lt;&lt; &quot;\n&quot;;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">lnumip</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">lnumip</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">localip</span><span class="p">[</span><span class="n">lnumip</span><span class="p">]</span> <span class="o">!=</span> <span class="n">BLANKIP</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">bcast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">id</span><span class="p">,</span><span class="n">localip</span><span class="p">[</span><span class="n">lnumip</span><span class="p">],</span><span class="n">localport</span><span class="p">[</span><span class="n">lnumip</span><span class="p">]);</span>
+			<span class="p">}</span>
+			<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">curtime</span><span class="p">);</span>
+			<span class="n">seconds</span> <span class="o">=</span> <span class="n">difftime</span><span class="p">(</span><span class="n">curtime</span><span class="p">,</span><span class="n">starttime</span><span class="p">);</span>
+			<span class="c1">//cout &lt;&lt; &quot;Seconds: &quot; &lt;&lt; seconds &lt;&lt; endl;</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">snumip</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+				<span class="n">snumip</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+			<span class="p">}</span>
+			<span class="k">if</span> <span class="p">(</span><span class="n">seconds</span> <span class="o">&gt;=</span> <span class="n">SERV_TIME</span><span class="p">)</span> <span class="p">{</span>
+				<span class="c1">//cout &lt;&lt; &quot;\nSERVER\n&quot;;</span>
+				<span class="n">time</span><span class="p">(</span><span class="o">&amp;</span><span class="n">starttime</span><span class="p">);</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">serverip</span><span class="p">[</span><span class="n">snumip</span><span class="p">]</span> <span class="o">!=</span> <span class="n">BLANKIP</span><span class="p">)</span> <span class="p">{</span>
+					<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Trying &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">serverip</span><span class="p">[</span><span class="n">snumip</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+					<span class="kt">bool</span> <span class="n">test</span> <span class="o">=</span> <span class="n">bcast</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">id</span><span class="p">,</span><span class="n">serverip</span><span class="p">[</span><span class="n">snumip</span><span class="p">],</span><span class="n">serverport</span><span class="p">[</span><span class="n">snumip</span><span class="p">]);</span>
+					<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">test</span><span class="p">)</span> <span class="p">{</span>
+						<span class="o">++</span><span class="n">fail</span><span class="p">;</span>
+						<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Server FAIL: &quot;</span> <span class="o">&lt;&lt;</span> <span class="n">fail</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+					<span class="p">}</span>
+					<span class="k">else</span> <span class="p">{</span>
+						<span class="n">fail</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+					<span class="p">}</span>
+					<span class="o">++</span><span class="n">snumip</span><span class="p">;</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">fail</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">||</span> <span class="n">fail</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+			<span class="o">++</span><span class="n">fail</span><span class="p">;</span>
+			<span class="n">system</span><span class="p">(</span><span class="s">&quot;ifdown eth1&quot;</span><span class="p">);</span>
+			<span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+			<span class="n">system</span><span class="p">(</span><span class="s">&quot;ifup eth1&quot;</span><span class="p">);</span>
+			<span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="k">if</span> <span class="p">(</span><span class="n">fail</span> <span class="o">&gt;=</span> <span class="n">FAIL</span><span class="p">)</span> <span class="p">{</span>
+			<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Maximum Failiure. Stopping</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+			<span class="n">close</span><span class="p">(</span><span class="n">gpsdata</span><span class="p">);</span>
+			<span class="n">system</span><span class="p">(</span><span class="s">&quot;reboot&quot;</span><span class="p">);</span>
+			<span class="k">break</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="n">msleep</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+		<span class="n">rl</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">gpsdata</span><span class="p">,</span><span class="n">buf</span><span class="p">,</span><span class="n">BUFSIZE</span><span class="p">);</span>
+		<span class="c1">//cout &lt;&lt; &quot;\n&quot;;</span>
+	<span class="p">}</span>
+	<span class="n">cerr</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">Modem has stopped transmitting data</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+	<span class="n">close</span><span class="p">(</span><span class="n">gpsdata</span><span class="p">);</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</body>
+</html>
